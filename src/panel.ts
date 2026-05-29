@@ -18,6 +18,7 @@ export class FishReaderViewProvider implements vscode.WebviewViewProvider {
 
   private view?: vscode.WebviewView;
   public library?: LibraryController;
+  private starCount?: number;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
@@ -59,10 +60,43 @@ export class FishReaderViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = getLibraryHtml(webviewView.webview, this.extensionUri);
 
-    webviewView.webview.onDidReceiveMessage((msg: FromLibrary) => library.handle(msg));
+    webviewView.webview.onDidReceiveMessage((msg: FromLibrary) => {
+      library.handle(msg);
+      if (msg.type === 'lib-ready') void this.postStars(post);
+    });
     webviewView.onDidChangeVisibility(() => {
       if (webviewView.visible) library.refresh();
     });
+  }
+
+  /** Fetch the repo's GitHub star count (once per session) and push it to the sidebar. */
+  private async postStars(post: (msg: ToLibrary) => void) {
+    const count = await this.fetchStars();
+    if (typeof count === 'number') post({ type: 'stars', count });
+  }
+
+  private async fetchStars(): Promise<number | undefined> {
+    if (typeof this.starCount === 'number') return this.starCount;
+    const m = this.repoUrl.match(/github\.com[/:]([^/]+)\/([^/.]+)/);
+    if (!m) return undefined;
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 4000);
+      const res = await fetch(`https://api.github.com/repos/${m[1]}/${m[2]}`, {
+        headers: { 'User-Agent': 'fishreader-vscode', Accept: 'application/vnd.github+json' },
+        signal: ctrl.signal,
+      });
+      clearTimeout(timer);
+      if (!res.ok) return undefined;
+      const json = (await res.json()) as { stargazers_count?: number };
+      if (typeof json.stargazers_count === 'number') {
+        this.starCount = json.stargazers_count;
+        return this.starCount;
+      }
+    } catch {
+      /* offline / rate-limited — leave the button without a count */
+    }
+    return undefined;
   }
 
   refresh() {

@@ -15,6 +15,15 @@ const emptyEl = document.getElementById('lib-empty') as HTMLElement;
 
 let books: LibBook[] = [];
 let filter = '';
+let starCount: number | undefined;
+
+function starLabel(): string {
+  return starCount != null ? `⭐ Star · ${starCount}` : '⭐ 给个 GitHub Star';
+}
+function applyStarLabel() {
+  const b = document.getElementById('promo-star');
+  if (b && b.textContent && !b.textContent.includes('已 Star')) b.textContent = starLabel();
+}
 
 function send(msg: unknown) {
   vscode.postMessage(msg);
@@ -79,6 +88,9 @@ window.addEventListener('message', (ev: MessageEvent<ToLibrary>) => {
   if (msg.type === 'books') {
     books = msg.books;
     render();
+  } else if (msg.type === 'stars') {
+    starCount = msg.count;
+    applyStarLabel();
   }
 });
 

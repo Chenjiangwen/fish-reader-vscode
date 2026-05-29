@@ -108,7 +108,9 @@ export interface LibBook {
   lastReadAt: number;
 }
 
-export type ToLibrary = { type: 'books'; books: LibBook[] };
+export type ToLibrary =
+  | { type: 'books'; books: LibBook[] }
+  | { type: 'stars'; count: number };
 
 export type FromLibrary =
   | { type: 'lib-ready' }

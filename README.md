@@ -1,5 +1,10 @@
 # FishReader
 
+[![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/fishreader.fishreader?label=Marketplace&color=569cd6)](https://marketplace.visualstudio.com/items?itemName=fishreader.fishreader)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/fishreader.fishreader?label=Installs&color=6a9955)](https://marketplace.visualstudio.com/items?itemName=fishreader.fishreader)
+[![GitHub Stars](https://img.shields.io/github/stars/wuuhw/fish-reader-vscode?style=flat&logo=github&color=d4a574)](https://github.com/wuuhw/fish-reader-vscode)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 > 一个**对话式 UI 的本地 TXT 小说阅读器**,装在 VSCode 里。把"读小说"变成"和 AI 对话"的样子:深色对话流、`> user` / `● assistant`、流式输出、代码 diff、状态栏——专注阅读,需要时一键切换到"工作态"。
 
 纯本地、不联网、不接在线书源、不调用任何 LLM。你的书只在你自己电脑上。
