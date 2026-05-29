@@ -1,0 +1,244 @@
+{
+  "name": "fishreader",
+  "displayName": "FishReader",
+  "description": "本地 TXT 小说阅读器,对话式 UI",
+  "version": "0.1.0",
+  "publisher": "fishreader",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wuuhw/fish-reader-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wuuhw/fish-reader-vscode/issues"
+  },
+  "homepage": "https://github.com/wuuhw/fish-reader-vscode#readme",
+  "keywords": [
+    "novel",
+    "reader",
+    "txt",
+    "小说",
+    "阅读器"
+  ],
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "fishReader",
+          "title": "FishReader",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "fishReader": [
+        {
+          "id": "fishReader.view",
+          "name": "FishReader",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "fishReader.openPanel",
+        "title": "FishReader: Open Panel"
+      },
+      {
+        "command": "fishReader.newSession",
+        "title": "FishReader: New Session",
+        "icon": "$(add)"
+      },
+      {
+        "command": "fishReader.openInEditor",
+        "title": "FishReader: Open in Editor (Tab)",
+        "icon": "$(split-horizontal)"
+      },
+      {
+        "command": "fishReader.bossToggle",
+        "title": "FishReader: Toggle Boss Mode"
+      },
+      {
+        "command": "fishReader.nextPage",
+        "title": "FishReader: Next Page"
+      },
+      {
+        "command": "fishReader.prevPage",
+        "title": "FishReader: Previous Page"
+      },
+      {
+        "command": "fishReader.initFromActiveFile",
+        "title": "FishReader: Open Current File as Book"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "fishReader.newSession",
+          "when": "view == fishReader.view",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "fishReader.bossToggle",
+        "key": "ctrl+shift+b",
+        "mac": "cmd+shift+b"
+      },
+      {
+        "command": "fishReader.nextPage",
+        "key": "alt+n",
+        "when": "view.fishReader.view.visible"
+      },
+      {
+        "command": "fishReader.prevPage",
+        "key": "alt+p",
+        "when": "view.fishReader.view.visible"
+      }
+    ],
+    "configuration": {
+      "title": "FishReader",
+      "properties": {
+        "fishReader.charsPerPage": {
+          "type": "number",
+          "default": 300,
+          "description": "每页字数(用于章节内页码计算)"
+        },
+        "fishReader.encoding": {
+          "type": "string",
+          "enum": ["auto", "utf-8", "gbk", "gb18030"],
+          "default": "auto",
+          "description": "文件编码"
+        },
+        "fishReader.chapterRegex": {
+          "type": "string",
+          "default": "^\\s*(第[\\d一二三四五六七八九十百千零两]+[章节卷回篇]|[Cc]hapter\\s+\\d+|楔子|序章|番外).*$",
+          "description": "章节标题匹配正则(支持 第X章/节/卷/回/篇、Chapter N、楔子、序章、番外)"
+        },
+        "fishReader.maxChapterChars": {
+          "type": "number",
+          "default": 3000,
+          "description": "单章最大字数:超过 1.5 倍则按段落切成虚拟分页;识别不到章节标题时,整本按此长度分页。0=关闭"
+        },
+        "fishReader.mergeParagraphs": {
+          "type": "boolean",
+          "default": true,
+          "description": "智能合并细碎段落:把多个小段落合并成一块再输出(保留段内换行)"
+        },
+        "fishReader.paragraphTargetChars": {
+          "type": "number",
+          "default": 120,
+          "description": "合并段落的目标字数:累计到此长度才作为一个段落块输出(mergeParagraphs 开启时生效)"
+        },
+        "fishReader.disguiseTheme": {
+          "type": "string",
+          "enum": ["claude-code", "copilot", "cursor"],
+          "default": "claude-code",
+          "description": "伪装主题(暂仅 claude-code)"
+        },
+        "fishReader.fakeThinkingSpeed": {
+          "type": "string",
+          "enum": ["slow", "normal", "fast", "off"],
+          "default": "normal",
+          "description": "流式输出速度"
+        },
+        "fishReader.fakeDiff.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否在每段后生成假 diff"
+        },
+        "fishReader.fakeDiff.frequency": {
+          "type": "number",
+          "default": 0.7,
+          "description": "出现假 diff 的概率 0~1"
+        },
+        "fishReader.fakeDiff.language": {
+          "type": "string",
+          "default": "auto",
+          "description": "假 diff 语言,auto 时跟随 workspace 主语言"
+        },
+        "fishReader.fakeDiff.snippetSource": {
+          "type": "string",
+          "enum": ["workspace", "builtin"],
+          "default": "workspace",
+          "description": "假 diff 文件名来源"
+        },
+        "fishReader.bossMode.triggers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["blur", "mouseLeave", "editorFocus"],
+            "enumDescriptions": [
+              "VSCode 窗口失去焦点(切到别的应用)",
+              "鼠标离开 FishReader 面板",
+              "切换/点开代码编辑器 tab"
+            ]
+          },
+          "default": ["blur", "mouseLeave"],
+          "description": "启用哪些被动触发方式自动进入老板模式。快捷键/按钮始终可用,与此无关"
+        },
+        "fishReader.bossMode.mouseLeaveDelay": {
+          "type": "number",
+          "default": 1000,
+          "description": "鼠标离开面板多久后触发(ms)。仅当 triggers 勾选了 mouseLeave 时生效"
+        },
+        "fishReader.bossMode.blurDelay": {
+          "type": "number",
+          "default": 5000,
+          "description": "窗口失焦多久后触发(ms)。仅当 triggers 勾选了 blur 时生效"
+        },
+        "fishReader.bossMode.autoExit": {
+          "type": "boolean",
+          "default": false,
+          "description": "老板模式开启后,是否允许被动方式(鼠标移回 / 窗口重新聚焦)自动退出。默认关闭——必须手动关闭(快捷键/按钮//resume),更安全"
+        },
+        "fishReader.bossMode.readActiveTab": {
+          "type": "boolean",
+          "default": true,
+          "description": "读当前编辑器 tab 生成伪装内容"
+        },
+        "fishReader.bossMode.fallbackToWorkspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "没有 active tab 时用 workspace 扫描"
+        },
+        "fishReader.bossMode.scanWorkspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "启动时扫描 workspace"
+        },
+        "fishReader.telemetry.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "遥测(默认关)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.config.js --production",
+    "watch": "node esbuild.config.js --watch",
+    "typecheck": "tsc --noEmit",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.84.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.3"
+  }
+}
