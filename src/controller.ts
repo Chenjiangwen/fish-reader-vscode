@@ -3,6 +3,9 @@ import * as fs from 'fs';
 import { ToWebview, FromWebview, DiffHunk, StatusData } from './types';
 import { ReaderEngine } from './engine/reader';
 import { decodeBuffer } from './engine/encoding';
+import { parseEpub } from './engine/formats/epub';
+import { parseFb2 } from './engine/formats/fb2';
+import { chaptersToText } from './engine/formats/structured';
 import { StateStore, bookId, BookRecord } from './engine/state';
 import { COMMANDS, parseInput } from './commands/registry';
 import { WorkspaceScanner } from './disguise/workspace-scanner';
@@ -220,17 +223,34 @@ export class Controller {
   // ---------- /init ----------
   private async loadBook(filePath: string, position = 0) {
     const buf = fs.readFileSync(filePath);
-    const encoding = this.cfg().get<string>('encoding', 'auto');
-    const { text, encoding: usedEnc } = decodeBuffer(buf, encoding);
     const baseName = filePath.split(/[\\/]/).pop() ?? 'book.txt';
-    this.engine = new ReaderEngine(filePath, baseName, text, {
+    const ext = baseName.toLowerCase().split('.').pop() ?? '';
+    const baseOpts = {
       charsPerPage: this.cfg().get<number>('charsPerPage', 300),
       chapterRegex: this.cfg().get<string>('chapterRegex', '^\\s*(第[\\d一二三四五六七八九十百千零两]+[章节卷回篇]|[Cc]hapter\\s+\\d+|楔子|序章|番外).*$'),
       maxChapterChars: this.cfg().get<number>('maxChapterChars', 3000),
       mergeTarget: this.cfg().get<boolean>('mergeParagraphs', true)
         ? this.cfg().get<number>('paragraphTargetChars', 120)
         : 50,
-    });
+    };
+
+    let usedEnc: string;
+
+    if (ext === 'epub' || ext === 'fb2') {
+      const bytes = new Uint8Array(buf);
+      const parsed = ext === 'epub' ? parseEpub(bytes) : parseFb2(bytes);
+      const built = chaptersToText(parsed.chapters);
+      usedEnc = ext.toUpperCase();
+      this.engine = new ReaderEngine(filePath, baseName, built.text, {
+        ...baseOpts,
+        prebuiltChapters: built.chapters,
+        bookTitle: parsed.title,
+      });
+    } else {
+      const decoded = decodeBuffer(buf, this.cfg().get<string>('encoding', 'auto'));
+      usedEnc = decoded.encoding;
+      this.engine = new ReaderEngine(filePath, baseName, decoded.text, baseOpts);
+    }
     this.engine.restorePosition(position);
 
     const rec: BookRecord = {

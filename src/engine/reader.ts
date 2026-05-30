@@ -20,15 +20,25 @@ export class ReaderEngine {
     filePath: string,
     fileBaseName: string,
     text: string,
-    opts: { charsPerPage: number; chapterRegex: string; maxChapterChars: number; mergeTarget: number }
+    opts: {
+      charsPerPage: number;
+      chapterRegex: string;
+      maxChapterChars: number;
+      mergeTarget: number;
+      /** Pre-split chapters (EPUB/FB2) — skips the chapter-title regex. */
+      prebuiltChapters?: Chapter[];
+      /** Explicit book title (EPUB/FB2 metadata) overrides the derived one. */
+      bookTitle?: string;
+    }
   ) {
     this.text = text;
-    this.chapters = subdivideChapters(text, splitChapters(text, opts.chapterRegex), opts.maxChapterChars);
+    const base = opts.prebuiltChapters ?? splitChapters(text, opts.chapterRegex);
+    this.chapters = subdivideChapters(text, base, opts.maxChapterChars);
     this.paginator = new Paginator(text, this.chapters, opts.charsPerPage, opts.mergeTarget);
     this.meta = {
       id: bookId(filePath),
       path: filePath,
-      title: deriveTitle(fileBaseName, text),
+      title: opts.bookTitle?.trim() || deriveTitle(fileBaseName, text),
       totalChapters: this.chapters.length,
       totalChars: text.length,
     };
