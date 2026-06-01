@@ -1,7 +1,7 @@
 {
-  "name": "fishreader",
-  "displayName": "FishReader",
-  "description": "本地 TXT 小说阅读器,对话式 UI",
+  "name": "fish-reader",
+  "displayName": "fish-reader - 摸鱼小说阅读器",
+  "description": "摸鱼看小说 - 本地 TXT/EPUB/FB2 小说阅读器,对话式伪装 UI,一键老板键。FishReader",
   "version": "0.1.0",
   "publisher": "fishreader",
   "license": "MIT",
@@ -15,16 +15,29 @@
   },
   "homepage": "https://github.com/wuuhw/fish-reader-vscode#readme",
   "keywords": [
+    "fish-reader",
+    "fishreader",
+    "FishReader",
+    "摸鱼",
+    "摸鱼看书",
+    "摸鱼看小说",
+    "小说",
+    "小说阅读器",
+    "阅读器",
+    "看书",
+    "老板模式",
+    "伪装",
     "novel",
     "reader",
     "txt",
-    "小说",
-    "阅读器"
+    "epub",
+    "fb2"
   ],
   "engines": {
     "vscode": "^1.84.0"
   },
   "categories": [
+    "Visualization",
     "Other"
   ],
   "main": "./dist/extension.js",
