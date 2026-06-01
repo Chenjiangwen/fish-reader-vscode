@@ -1,17 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-     stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-  <!-- fish body -->
-  <ellipse cx="9.4" cy="13.4" rx="6.8" ry="5"/>
-  <!-- forked tail -->
-  <path d="M14.8 13.4 L20 9.2 L18.7 13.4 L20 18 Z"/>
-  <!-- mouth slit -->
-  <path d="M3 14 C3.9 15.1 5.4 15.2 6.3 14.3"/>
-  <!-- eye -->
-  <circle cx="6" cy="11.7" r="0.9" fill="currentColor" stroke="none"/>
-  <!-- mallet striking the back -->
-  <path d="M21 3.2 L15.4 7.9"/>
-  <circle cx="14.3" cy="8.9" r="1.9"/>
-  <!-- impact / 敲击 lines -->
-  <path d="M10.4 6.6 C10.7 5.9 11.3 5.5 12 5.6"/>
-  <path d="M8.6 7.6 C8.6 6.8 9 6.2 9.7 5.9"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="currentColor" role="img" aria-label="FishReader">
+  <defs>
+    <mask id="fr-eye-m">
+      <rect width="120" height="120" fill="#fff"></rect>
+      <path d="M79 58 q6.5 6 13 0" fill="none" stroke="#000" stroke-width="3.6" stroke-linecap="round"></path>
+    </mask>
+  </defs>
+  <g mask="url(#fr-eye-m)">
+    <path d="M42 62 L10 41 L25 62 L10 83 Z"></path>
+    <path d="M52 40 L63 24 L82 46 Z"></path>
+    <path d="M58 82 L63 99 L82 86 Z"></path>
+    <ellipse cx="66" cy="62" rx="34" ry="25"></ellipse>
+  </g>
+  <g opacity="0.55">
+    <circle cx="104" cy="50" r="3.2"></circle>
+    <circle cx="111" cy="41" r="2.3"></circle>
+    <circle cx="115" cy="34" r="1.6"></circle>
+  </g>
 </svg>
