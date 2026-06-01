@@ -36,7 +36,7 @@ export function getLibraryHtml(webview: vscode.Webview, extensionUri: vscode.Uri
       <input id="lib-search" type="text" placeholder="搜索小说…" />
     </div>
     <div id="lib-list" class="lib-list"></div>
-    <div id="lib-empty" class="lib-empty hidden">还没有阅读记录。<br/>点「新建会话」打开一本 txt。</div>
+    <div id="lib-empty" class="lib-empty hidden">还没有阅读记录。<br/>点「新建会话」打开一本小说(txt / epub / fb2)。</div>
     <div class="lib-promo" id="lib-promo">
       <button class="promo-close" id="promo-close" title="不再显示">×</button>
       <div class="promo-dy">

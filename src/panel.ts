@@ -37,6 +37,19 @@ export class FishReaderViewProvider implements vscode.WebviewViewProvider {
     void vscode.env.openExternal(vscode.Uri.parse(this.repoUrl));
   }
 
+  /** Confirm and delete a book's reading record. Resolves true if removed. */
+  private async confirmDelete(id: string): Promise<boolean> {
+    const title = this.state.getBook(id)?.title ?? '该记录';
+    const pick = await vscode.window.showWarningMessage(
+      `删除「${title}」的阅读记录?`,
+      { modal: true, detail: '仅删除阅读进度记录,不会删除本地文件。' },
+      '删除'
+    );
+    if (pick !== '删除') return false;
+    this.state.deleteBook(id);
+    return true;
+  }
+
   resolveWebviewView(webviewView: vscode.WebviewView): void {
     this.view = webviewView;
     webviewView.webview.options = {
@@ -54,7 +67,8 @@ export class FishReaderViewProvider implements vscode.WebviewViewProvider {
       this.onOpenBook,
       this.onNewSession,
       (text) => this.copyText(text),
-      () => this.openGithub()
+      () => this.openGithub(),
+      (id) => this.confirmDelete(id)
     );
     this.library = library;
 

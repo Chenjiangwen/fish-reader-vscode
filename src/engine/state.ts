@@ -72,6 +72,13 @@ export class StateStore {
     this.write(s);
   }
 
+  deleteBook(id: string): void {
+    const s = this.read();
+    s.books = s.books.filter((b) => b.id !== id);
+    if (s.lastBookId === id) s.lastBookId = undefined;
+    this.write(s);
+  }
+
   setPosition(id: string, position: number): void {
     const s = this.read();
     const b = s.books.find((bk) => bk.id === id);

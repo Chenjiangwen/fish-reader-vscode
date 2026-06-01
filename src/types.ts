@@ -92,6 +92,7 @@ export type ToWebview =
 export type FromWebview =
   | { type: 'ready' }
   | { type: 'command'; raw: string }
+  | { type: 'pick-file' }
   | { type: 'request-next' }
   | { type: 'request-prev' }
   | { type: 'toggle-boss' }
@@ -116,5 +117,6 @@ export type FromLibrary =
   | { type: 'lib-ready' }
   | { type: 'lib-open'; id: string }
   | { type: 'lib-new' }
+  | { type: 'lib-delete'; id: string }
   | { type: 'lib-copy'; text: string }
   | { type: 'lib-star' };

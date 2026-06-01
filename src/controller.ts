@@ -62,6 +62,8 @@ export class Controller {
 
   /** Apply an open-intent: a specific book, a fresh session, or restore the last. */
   async applyIntent(intent: { bookId?: string; newSession?: boolean }) {
+    // Opening from the sidebar is an explicit read action — never land in boss.
+    this.enterReadingMode();
     this.post({ type: 'clear' });
     if (intent.newSession) {
       this.engine = undefined;
@@ -78,7 +80,7 @@ export class Controller {
       type: 'assistant-text',
       markdown: true,
       text:
-        '欢迎使用 **FishReader**。\n\n输入 `/init <文件路径>` 关联一本本地 txt,或把 txt 文件拖进面板。\n输入 `/help` 查看全部命令。',
+        '欢迎使用 **FishReader**。\n\n输入 `/init <文件路径>` 关联一本本地小说(支持 txt / epub / fb2),或点击输入框左下角的 `+` 选择文件。\n输入 `/help` 查看全部命令。',
     });
   }
 
@@ -132,6 +134,9 @@ export class Controller {
         break;
       case 'command':
         await this.handleInput(msg.raw);
+        break;
+      case 'pick-file':
+        await this.cmdPickFile();
         break;
       case 'request-next':
         this.cmdNext();
@@ -222,8 +227,15 @@ export class Controller {
 
   // ---------- /init ----------
   private async loadBook(filePath: string, position = 0) {
+    // Loading a book always means "read now" — drop any boss state/timer.
+    this.enterReadingMode();
     const buf = fs.readFileSync(filePath);
     const baseName = filePath.split(/[\\/]/).pop() ?? 'book.txt';
+    return this.loadBookFromBuffer(buf, baseName, filePath, position);
+  }
+
+  /** Core loader. `idKey` is the stable key for progress storage (a real path, or the file name for dropped bytes). */
+  private async loadBookFromBuffer(buf: Buffer, baseName: string, idKey: string, position = 0) {
     const ext = baseName.toLowerCase().split('.').pop() ?? '';
     const baseOpts = {
       charsPerPage: this.cfg().get<number>('charsPerPage', 300),
@@ -241,7 +253,7 @@ export class Controller {
       const parsed = ext === 'epub' ? parseEpub(bytes) : parseFb2(bytes);
       const built = chaptersToText(parsed.chapters);
       usedEnc = ext.toUpperCase();
-      this.engine = new ReaderEngine(filePath, baseName, built.text, {
+      this.engine = new ReaderEngine(idKey, baseName, built.text, {
         ...baseOpts,
         prebuiltChapters: built.chapters,
         bookTitle: parsed.title,
@@ -249,13 +261,13 @@ export class Controller {
     } else {
       const decoded = decodeBuffer(buf, this.cfg().get<string>('encoding', 'auto'));
       usedEnc = decoded.encoding;
-      this.engine = new ReaderEngine(filePath, baseName, decoded.text, baseOpts);
+      this.engine = new ReaderEngine(idKey, baseName, decoded.text, baseOpts);
     }
     this.engine.restorePosition(position);
 
     const rec: BookRecord = {
       id: this.engine.meta.id,
-      path: filePath,
+      path: idKey,
       title: this.engine.meta.title,
       totalChapters: this.engine.meta.totalChapters,
       totalChars: this.engine.meta.totalChars,
@@ -270,10 +282,23 @@ export class Controller {
     return { usedEnc, byteSize: buf.length };
   }
 
+  /** Open a native file picker and load the chosen book (wired to the `+` button). */
+  private async cmdPickFile() {
+    const picks = await vscode.window.showOpenDialog({
+      canSelectMany: false,
+      openLabel: '打开',
+      title: '选择小说文件',
+      defaultUri: vscode.workspace.workspaceFolders?.[0]?.uri,
+      filters: { '小说文件': ['txt', 'epub', 'fb2'], '所有文件': ['*'] },
+    });
+    const file = picks?.[0];
+    if (file) await this.cmdInit(file.fsPath);
+  }
+
   private async cmdInit(rawPath: string) {
     let p = rawPath.trim().replace(/^["']|["']$/g, '');
     if (!p) {
-      this.post({ type: 'assistant-text', text: '用法:/init <txt 文件路径>' });
+      this.post({ type: 'assistant-text', text: '用法:/init <文件路径>(支持 txt / epub / fb2)' });
       return;
     }
     // Resolve relative to workspace root.
@@ -289,22 +314,27 @@ export class Controller {
 
     try {
       const { usedEnc, byteSize } = await this.loadBook(p, 0);
-      const eng = this.engine!;
-      this.post({ type: 'thinking', lines: initThinkingLog(byteSize, usedEnc, eng.meta.totalChapters) });
-      this.post({
-        type: 'assistant-text',
-        markdown: true,
-        text:
-          `书名: **${eng.meta.title}**\n` +
-          `章节: ${eng.meta.totalChapters} 章 · 字数: ${eng.meta.totalChars.toLocaleString()}\n` +
-          `解析完成 ✓\n\n` +
-          '```\n/目录       查看章节列表\n/下一页     下一章(整章输出)\n/上一页     上一章\n/跳转 N     跳到第 N 章\n/搜索 X     全文搜索\n```',
-      });
-      // Directly dump the first chapter so reading isn't a paragraph-by-paragraph grind.
-      this.cmdNext();
+      this.announceLoaded(usedEnc, byteSize);
     } catch (e: any) {
       this.post({ type: 'error', message: `解析失败:${e?.message ?? e}` });
     }
+  }
+
+  /** Shared "book loaded" message + auto-render of the first chapter. */
+  private announceLoaded(usedEnc: string, byteSize: number) {
+    const eng = this.engine!;
+    this.post({ type: 'thinking', lines: initThinkingLog(byteSize, usedEnc, eng.meta.totalChapters) });
+    this.post({
+      type: 'assistant-text',
+      markdown: true,
+      text:
+        `书名: **${eng.meta.title}**\n` +
+        `章节: ${eng.meta.totalChapters} 章 · 字数: ${eng.meta.totalChars.toLocaleString()}\n` +
+        `解析完成 ✓\n\n` +
+        '```\n/目录       查看章节列表\n/下一页     下一章(整章输出)\n/上一页     上一章\n/跳转 N     跳到第 N 章\n/搜索 X     全文搜索\n```',
+    });
+    // Directly dump the first chapter so reading isn't a paragraph-by-paragraph grind.
+    this.cmdNext();
   }
 
   // ---------- reading ----------
@@ -530,6 +560,20 @@ export class Controller {
   }
 
   // ---------- boss mode ----------
+  /**
+   * Force reading mode: opening/loading a book is an explicit "I want to read"
+   * action, so cancel any armed mouse-leave timer and leave boss mode if active.
+   * (The cursor briefly leaving the panel to click the list or the file dialog
+   * shouldn't strand the user in boss mode.)
+   */
+  private enterReadingMode() {
+    if (this.mouseLeaveTimer) {
+      clearTimeout(this.mouseLeaveTimer);
+      this.mouseLeaveTimer = undefined;
+    }
+    if (this.bossActive) this.exitBoss();
+  }
+
   toggleBoss(trigger: BossTrigger) {
     if (this.bossActive) this.exitBoss();
     else this.enterBoss(trigger);

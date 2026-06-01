@@ -69,14 +69,29 @@ function render() {
     fill.style.width = `${b.progressPct}%`;
     bar.appendChild(fill);
 
+    const del = document.createElement('button');
+    del.className = 'lib-del';
+    del.textContent = '×';
+    del.title = '删除阅读记录';
+    del.setAttribute('aria-label', `删除 ${b.title}`);
+    del.addEventListener('click', (e: MouseEvent) => {
+      e.stopPropagation();
+      send({ type: 'lib-delete', id: b.id });
+    });
+
     item.appendChild(title);
     item.appendChild(meta);
     item.appendChild(bar);
+    item.appendChild(del);
 
     const open = () => send({ type: 'lib-open', id: b.id });
     item.addEventListener('click', open);
     item.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Enter') open();
+      else if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        send({ type: 'lib-delete', id: b.id });
+      }
     });
 
     listEl.appendChild(item);

@@ -481,6 +481,7 @@ body {
   gap: 4px;
 }
 .lib-item {
+  position: relative;
   padding: 8px 9px;
   border-radius: 6px;
   cursor: pointer;
@@ -492,6 +493,32 @@ body {
 .lib-item:focus {
   outline: none;
   border-color: var(--accent);
+}
+.lib-del {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  line-height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+.lib-item:hover .lib-del,
+.lib-item:focus .lib-del,
+.lib-del:focus {
+  opacity: 1;
+}
+.lib-del:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
 }
 .lib-title {
   font-family: var(--font-sans);

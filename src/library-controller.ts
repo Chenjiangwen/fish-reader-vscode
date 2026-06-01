@@ -9,7 +9,8 @@ export class LibraryController {
     private onOpen: (id: string) => void,
     private onNew: () => void,
     private onCopy: (text: string) => void,
-    private onStar: () => void
+    private onStar: () => void,
+    private onDelete: (id: string) => Promise<boolean>
   ) {}
 
   handle(msg: FromLibrary) {
@@ -22,6 +23,11 @@ export class LibraryController {
         break;
       case 'lib-new':
         this.onNew();
+        break;
+      case 'lib-delete':
+        void this.onDelete(msg.id).then((deleted) => {
+          if (deleted) this.refresh();
+        });
         break;
       case 'lib-copy':
         this.onCopy(msg.text);

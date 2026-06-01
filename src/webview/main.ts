@@ -333,9 +333,9 @@ sendBtn.addEventListener('click', () => {
   inputEl.focus();
 });
 
-// `+` is decorative (matches Claude Code's add-context affordance); focus input.
+// `+` opens a native file picker on the extension side to load a book.
 plusBtn.addEventListener('click', () => {
-  inputEl.focus();
+  send({ type: 'pick-file' });
 });
 
 // ---------- mouse-leave auto boss ----------
@@ -344,30 +344,6 @@ appEl.addEventListener('mouseleave', () => {
 });
 appEl.addEventListener('mouseenter', () => {
   send({ type: 'mouse-enter' });
-});
-
-// ---------- drag & drop -> /init ----------
-appEl.addEventListener('dragover', (e) => {
-  e.preventDefault();
-});
-appEl.addEventListener('drop', (e) => {
-  e.preventDefault();
-  const dt = e.dataTransfer;
-  if (!dt) return;
-  // VSCode provides the resource path in 'text/uri-list' or plain text.
-  const uri = dt.getData('text/uri-list') || dt.getData('text');
-  if (uri) {
-    let path = uri.trim().split('\n')[0];
-    path = path.replace(/^file:\/\//, '');
-    try {
-      path = decodeURIComponent(path);
-    } catch {
-      /* ignore */
-    }
-    inputEl.value = `/init ${path}`;
-    inputEl.focus();
-    autoSize();
-  }
 });
 
 // ---------- boot ----------
