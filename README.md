@@ -9,6 +9,10 @@
 
 纯本地、不联网、不接在线书源、不调用任何 LLM。你的书只在你自己电脑上。
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/wuuhw/fish-reader-vscode/main/media/demo.gif" alt="FishReader 演示" width="800" />
+</p>
+
 ---
 
 ## ✨ 功能特性
@@ -30,7 +34,7 @@
 
 1. 安装后,点左侧活动栏的 **◆ FishReader** 图标,打开侧边栏。
 2. 点顶部 **＋ 新建会话**,会在编辑器区打开一个阅读面板(tab)。
-3. 在输入框输入 `/init <txt 文件路径>` 关联一本书(也可以直接把 txt 文件**拖进面板**)。
+3. 在输入框输入 `/init <文件路径>` 关联一本书(也可以点输入框左下角的 **`+`** 选择本地文件,支持 txt / epub / fb2)。
 4. 输入 `/next`(或按 ↑ 调出再回车)开始一章一章地读。
 
 之后这本书会出现在侧边栏书库里,下次点一下就能从上次位置接着读。
