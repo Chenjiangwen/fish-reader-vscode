@@ -2,7 +2,7 @@
   "name": "fish-reader",
   "displayName": "fish-reader - 摸鱼小说阅读器",
   "description": "摸鱼看小说 - 本地 TXT/EPUB/FB2 小说阅读器,对话式伪装 UI,一键老板键。FishReader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "fishreader",
   "license": "MIT",
   "icon": "media/icon.png",
