@@ -184,14 +184,22 @@ export class UI {
   toc(chapters: { index: number; title: string }[], current: number) {
     const { body } = this.beginAssistant('目录');
     const list = el('div', 'toc-list');
+    let currentItem: HTMLElement | undefined;
     chapters.forEach((c) => {
-      const item = el('div', 'toc-item' + (c.index === current ? ' toc-current' : ''));
+      const isCurrent = c.index === current;
+      const item = el('div', 'toc-item' + (isCurrent ? ' toc-current' : ''));
       item.textContent = `${c.index + 1}. ${c.title}`;
+      if (isCurrent) {
+        item.appendChild(el('span', 'toc-current-tag', '当前'));
+        currentItem = item;
+      }
       item.addEventListener('click', () => this.sink(`/跳转 ${c.index + 1}`));
       list.appendChild(item);
     });
     body.appendChild(list);
-    this.scroll();
+    // Locate the current chapter so it's visible even in a long book.
+    if (currentItem) currentItem.scrollIntoView({ block: 'center' });
+    else this.scroll();
   }
 
   // ---- search ----

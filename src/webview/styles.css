@@ -270,6 +270,21 @@ body {
 }
 .toc-current {
   color: var(--accent-string);
+  font-weight: 700;
+  background: var(--bg-hover);
+  border-left: 2px solid var(--accent-string);
+  padding-left: 4px;
+}
+.toc-current-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  vertical-align: middle;
+  color: var(--btn-fg);
+  background: var(--accent-string);
 }
 .search-chap {
   color: var(--accent-assistant);
