@@ -1,0 +1,143 @@
+name: Release
+
+# 触发方式:
+#   1. 推送形如 v0.1.0 的 tag → 打包 .vsix、发布到 VS Code 商店、回传 OSS、
+#      生成 vscode.json(官网据此拿到最新插件)、建 GitHub Release(附带 .vsix)
+#   2. Actions 页手动运行(workflow_dispatch)→ 只打包并存为构建产物,不发布
+#
+# 版本号以 package.json 为准(vsce 据此发布);tag 仅用于触发与命名,
+# 发布前请确保 package.json 版本已 bump 且与 tag 一致。
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+# 允许 workflow 创建 GitHub Release
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 读取版本号(以 package.json 为准)
+        id: ver
+        shell: bash
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "vsix=fish-reader-$VER.vsix" >> "$GITHUB_OUTPUT"
+          echo "📦 版本 $VER"
+          # 推 tag 时校验 tag 与 package.json 一致(不一致只告警,不中断)
+          if [ "${{ startsWith(github.ref, 'refs/tags/') }}" = "true" ]; then
+            TAG="${{ github.ref_name }}"; TAG="${TAG#v}"
+            if [ "$TAG" != "$VER" ]; then
+              echo "::warning::tag($TAG) 与 package.json($VER) 版本不一致,建议保持一致"
+            fi
+          fi
+
+      # vsce package 会自动跑 vscode:prepublish(= npm run build)再打包
+      - name: 打包 .vsix
+        run: npx --yes @vscode/vsce package -o "${{ steps.ver.outputs.vsix }}"
+
+      # 每次都把 vsix 存为构建产物,手动触发也能在运行页下载
+      - name: 上传 vsix 为构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: vsix
+          if-no-files-found: error
+          retention-days: 14
+          path: ${{ steps.ver.outputs.vsix }}
+
+      # ===================================================================
+      # 以下仅在「推送 v* tag」时执行(手动 Run 到此结束,只构建不发布)
+      # ===================================================================
+
+      - name: 发布到 VS Code 商店
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npx --yes @vscode/vsce publish --packagePath "${{ steps.ver.outputs.vsix }}"
+
+      # 更新说明(展示给终端用户):优先 RELEASE_NOTES.md,否则取最近一条提交主题
+      - name: 计算更新说明
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          if [ -f RELEASE_NOTES.md ]; then
+            NOTES=$(cat RELEASE_NOTES.md)
+          else
+            # 取提交主题(首行),去掉 "release: vX.Y.Z" / "chore(release): vX.Y.Z" 前缀
+            NOTES=$(git log -1 --pretty=%s)
+            NOTES=$(printf '%s' "$NOTES" | sed -E 's/^(chore\(release\)|release):[[:space:]]*v?[0-9]+(\.[0-9]+)*[[:space:]]*//')
+          fi
+          [ -z "$NOTES" ] && NOTES='本次更新包含若干改进与修复。'
+          {
+            echo "RELEASE_NOTES<<__EOF__"
+            echo "$NOTES"
+            echo "__EOF__"
+          } >> "$GITHUB_ENV"
+          echo "更新说明 → $NOTES"
+
+      # 生成 vscode.json —— 官网运行时拉取它,拿到最新版本号与 .vsix 直链
+      - name: 生成 vscode.json
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          node scripts/gen-vscode-json.mjs \
+            --version "${{ steps.ver.outputs.version }}" \
+            --vsix-url "https://moyulao.oss-cn-beijing.aliyuncs.com/updates/vscode/v${{ steps.ver.outputs.version }}/${{ steps.ver.outputs.vsix }}" \
+            --marketplace "https://marketplace.visualstudio.com/items?itemName=fishreader.fish-reader" \
+            --out vscode.json \
+            --notes "$RELEASE_NOTES"
+
+      # ossutil v1 官方二进制(直链下载 + chmod,runner 非 root 不能用官方 install.sh)
+      - name: 安装 ossutil
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          curl -fsSL -o ossutil64 https://gosspublic.alicdn.com/ossutil/1.7.18/ossutil64
+          chmod +x ossutil64
+          ./ossutil64 --version
+
+      - name: 配置 ossutil(RAM 子账号,仅该 bucket 写权限)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          ./ossutil64 config \
+            -e oss-cn-beijing.aliyuncs.com \
+            -i "${{ secrets.OSS_ACCESS_KEY_ID }}" \
+            -k "${{ secrets.OSS_ACCESS_KEY_SECRET }}"
+
+      # 上传:vsix → updates/vscode/<tag>/;vscode.json → updates/(覆盖,始终最新)
+      - name: 上传到 OSS
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          VER="${{ steps.ver.outputs.version }}"
+          ./ossutil64 cp -f "${{ steps.ver.outputs.vsix }}" \
+            "oss://moyulao/updates/vscode/v${VER}/${{ steps.ver.outputs.vsix }}"
+          ./ossutil64 cp -f vscode.json "oss://moyulao/updates/vscode.json"
+
+      - name: 建 GitHub Release(附带 .vsix)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 反复重跑同一 tag:先删同名 Release(保留 tag),再重建
+          gh release delete "${{ github.ref_name }}" \
+            --repo "${{ github.repository }}" --yes || echo "没有同名 Release,跳过删除"
+          gh release create "${{ github.ref_name }}" \
+            --repo "${{ github.repository }}" \
+            --title "FishReader ${{ github.ref_name }}" \
+            --notes "$RELEASE_NOTES" \
+            "${{ steps.ver.outputs.vsix }}"

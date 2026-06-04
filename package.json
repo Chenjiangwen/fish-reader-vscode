@@ -243,7 +243,8 @@
     "build": "node esbuild.config.js --production",
     "watch": "node esbuild.config.js --watch",
     "typecheck": "tsc --noEmit",
-    "package": "vsce package"
+    "package": "vsce package",
+    "release": "node scripts/release.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
