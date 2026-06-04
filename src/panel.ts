@@ -29,12 +29,17 @@ export class FishReaderViewProvider implements vscode.WebviewViewProvider {
   ) {}
 
   private copyText(text: string) {
+    // The "copied" feedback is shown as a bubble in the sidebar webview itself,
+    // so no VS Code notification here.
     void vscode.env.clipboard.writeText(text);
-    void vscode.window.showInformationMessage(`已复制抖音号:${text}`);
   }
 
   private openGithub() {
     void vscode.env.openExternal(vscode.Uri.parse(this.repoUrl));
+  }
+
+  private openWebsite() {
+    void vscode.env.openExternal(vscode.Uri.parse('https://moyulao.cn/'));
   }
 
   /** Confirm and delete a book's reading record. Resolves true if removed. */
@@ -68,7 +73,8 @@ export class FishReaderViewProvider implements vscode.WebviewViewProvider {
       this.onNewSession,
       (text) => this.copyText(text),
       () => this.openGithub(),
-      (id) => this.confirmDelete(id)
+      (id) => this.confirmDelete(id),
+      () => this.openWebsite()
     );
     this.library = library;
 

@@ -10,7 +10,8 @@ export class LibraryController {
     private onNew: () => void,
     private onCopy: (text: string) => void,
     private onStar: () => void,
-    private onDelete: (id: string) => Promise<boolean>
+    private onDelete: (id: string) => Promise<boolean>,
+    private onWeb: () => void
   ) {}
 
   handle(msg: FromLibrary) {
@@ -34,6 +35,9 @@ export class LibraryController {
         break;
       case 'lib-star':
         this.onStar();
+        break;
+      case 'lib-web':
+        this.onWeb();
         break;
     }
   }

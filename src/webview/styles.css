@@ -584,139 +584,86 @@ body {
 .lib-promo:hover {
   opacity: 1;
 }
-.promo-close {
-  position: absolute;
-  top: 6px;
-  right: 2px;
-  width: 18px;
-  height: 18px;
-  line-height: 16px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  color: var(--text-tertiary);
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-.promo-close:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-.promo-dy {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 8px;
-  padding-right: 18px;
+.promo-intro {
+  margin: 0 0 9px;
   font-size: 11px;
+  line-height: 1.7;
   color: var(--text-secondary);
 }
-.promo-num {
-  font-family: var(--font-mono);
+/* author links: 官网 / GitHub / 关注抖音 */
+.promo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
-.promo-num b {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-.promo-or {
+.promo-link {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 64px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 8px 0;
-  color: var(--text-tertiary);
-  font-size: 10.5px;
-}
-.promo-or::before,
-.promo-or::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-.promo-btn {
-  display: block;
-  width: 100%;
-  padding: 5px 8px;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 6px;
   background: transparent;
   border: 1px solid var(--input-border);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: 11.5px;
+  white-space: nowrap;
   cursor: pointer;
 }
-.promo-btn:hover {
-  background: var(--bg-hover);
-  border-color: var(--accent-thinking);
+/* 关注抖音 occupies a full row on top; 官网 + GitHub share the row below. */
+.promo-link-wide {
+  flex: 1 1 100%;
 }
-.promo-copy {
-  flex: 0 0 auto;
-  margin-left: auto;
-  background: transparent;
-  border: 1px solid var(--input-border);
-  color: var(--text-secondary);
-  border-radius: 4px;
-  font-size: 10.5px;
-  padding: 1px 7px;
-  cursor: pointer;
-}
-.promo-copy:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-/* thank-you panel */
-.promo-thx {
-  text-align: center;
-  font-size: 12.5px;
-  color: var(--text-primary);
-  padding: 8px 4px 4px;
-  line-height: 1.8;
-}
-
-/* "reconsider?" popover */
-.promo-pop {
+/* "已复制" bubble that pops up from the 关注抖音 button */
+.promo-toast {
   position: absolute;
-  left: 8px;
-  right: 8px;
-  bottom: calc(100% - 2px);
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.5;
+  padding: 7px 9px;
+  font-size: 11px;
+  color: var(--text-primary);
   background: var(--vscode-editorWidget-background, var(--bg-secondary));
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 9px 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-  z-index: 20;
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 30;
 }
-.promo-pop-text {
-  font-size: 12px;
-  color: var(--text-primary);
-  margin-bottom: 8px;
+.promo-toast.show {
+  opacity: 1;
+  transform: translateY(0);
 }
-.promo-pop-actions {
-  display: flex;
-  gap: 6px;
-  justify-content: flex-end;
+/* little arrow pointing down at the button */
+.promo-toast::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--vscode-editorWidget-background, var(--bg-secondary));
 }
-.promo-pop-keep,
-.promo-pop-close {
-  font-size: 11px;
-  border-radius: 5px;
-  padding: 3px 9px;
-  cursor: pointer;
-  border: 1px solid var(--input-border);
-  background: transparent;
-  color: var(--text-secondary);
-}
-.promo-pop-keep:hover {
+.promo-link:hover {
   background: var(--bg-hover);
-  color: var(--text-primary);
+  border-color: var(--accent-thinking);
 }
-.promo-pop-close {
-  background: var(--btn-bg);
-  color: var(--btn-fg);
-  border-color: transparent;
+.promo-ico {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
 }
-.promo-pop-close:hover {
-  background: var(--vscode-button-hoverBackground, var(--btn-bg));
+.promo-ico-dy {
+  width: 15px;
+  height: 15px;
 }

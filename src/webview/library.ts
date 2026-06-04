@@ -15,15 +15,6 @@ const emptyEl = document.getElementById('lib-empty') as HTMLElement;
 
 let books: LibBook[] = [];
 let filter = '';
-let starCount: number | undefined;
-
-function starLabel(): string {
-  return starCount != null ? `⭐ Star · ${starCount}` : '⭐ 给个 GitHub Star';
-}
-function applyStarLabel() {
-  const b = document.getElementById('promo-star');
-  if (b && b.textContent && !b.textContent.includes('已 Star')) b.textContent = starLabel();
-}
 
 function send(msg: unknown) {
   vscode.postMessage(msg);
@@ -103,9 +94,6 @@ window.addEventListener('message', (ev: MessageEvent<ToLibrary>) => {
   if (msg.type === 'books') {
     books = msg.books;
     render();
-  } else if (msg.type === 'stars') {
-    starCount = msg.count;
-    applyStarLabel();
   }
 });
 
@@ -115,111 +103,28 @@ searchEl.addEventListener('input', () => {
   render();
 });
 
-// ---- author promo (tracks copy / star, dismissible with a guilt-trip) ----
-interface Promo {
-  copied?: boolean;
-  starred?: boolean;
-  dismissed?: boolean;
-}
-const promoEl = document.getElementById('lib-promo') as HTMLElement | null;
+// ---- author promo: 官网 / GitHub / 关注抖音 (always shown) ----
+document.getElementById('promo-web')?.addEventListener('click', () => send({ type: 'lib-web' }));
+document.getElementById('promo-github')?.addEventListener('click', () => send({ type: 'lib-star' }));
 
-function fullState(): Record<string, unknown> {
-  return (vscode.getState() as Record<string, unknown>) ?? {};
-}
-// New key `promoV2` — supersedes the old `promoDismissed`, so prior closes reset.
-let promo: Promo = (fullState().promoV2 as Promo) ?? {};
-function savePromo() {
-  vscode.setState({ ...fullState(), promoV2: promo });
-}
-function hidePromo() {
-  promoEl?.classList.add('hidden');
-}
-
-function showThanks() {
-  if (!promoEl) return;
-  promoEl.innerHTML =
-    '<button class="promo-close" id="promo-thx-close" title="关闭">×</button>' +
-    '<div class="promo-thx">🙏 感谢支持!<br/>祝你摸鱼愉快~</div>';
-  document.getElementById('promo-thx-close')?.addEventListener('click', () => {
-    promo.dismissed = true;
-    savePromo();
-    hidePromo();
-  });
-}
-
-/** If both actions are done, swap the block for a thank-you panel. */
-function maybeThanks(): boolean {
-  if (promo.copied && promo.starred) {
-    savePromo();
-    showThanks();
-    return true;
-  }
-  return false;
-}
-
-/** Reflect already-done actions on the buttons. */
-function reflectMarks() {
-  if (promo.copied) {
-    const b = document.getElementById('promo-copy');
-    if (b) b.textContent = '已复制';
-  }
-  if (promo.starred) {
-    const b = document.getElementById('promo-star');
-    if (b) b.textContent = '⭐ 已 Star,谢谢!';
-  }
-}
-
-/** Clicked × with neither action done → a small "reconsider?" popover. */
-function showReconsider() {
-  if (!promoEl || promoEl.querySelector('.promo-pop')) return;
-  const pop = document.createElement('div');
-  pop.className = 'promo-pop';
-  pop.innerHTML =
-    '<div class="promo-pop-text">😭 要不…再考虑一下嘛~</div>' +
-    '<div class="promo-pop-actions">' +
-    '<button class="promo-pop-keep" id="pop-keep">好吧再看看</button>' +
-    '<button class="promo-pop-close" id="pop-close">直接关闭</button>' +
-    '</div>';
-  promoEl.appendChild(pop);
-  document.getElementById('pop-keep')?.addEventListener('click', () => pop.remove());
-  document.getElementById('pop-close')?.addEventListener('click', () => {
-    promo.dismissed = true;
-    savePromo();
-    hidePromo();
-  });
-}
-
-// init
-if (promo.dismissed) {
-  hidePromo();
-} else if (!maybeThanks()) {
-  reflectMarks();
-}
-
-document.getElementById('promo-copy')?.addEventListener('click', () => {
+let douyinToastTimer: ReturnType<typeof setTimeout> | undefined;
+const douyinBtn = document.getElementById('promo-douyin');
+douyinBtn?.addEventListener('click', () => {
   send({ type: 'lib-copy', text: '1642834098' });
-  promo.copied = true;
-  savePromo();
-  const b = document.getElementById('promo-copy');
-  if (b) b.textContent = '已复制';
-  maybeThanks();
-});
-document.getElementById('promo-star')?.addEventListener('click', () => {
-  send({ type: 'lib-star' });
-  promo.starred = true;
-  savePromo();
-  const b = document.getElementById('promo-star');
-  if (b) b.textContent = '⭐ 已 Star,谢谢!';
-  maybeThanks();
-});
-document.getElementById('promo-close')?.addEventListener('click', () => {
-  if (!promo.copied && !promo.starred) {
-    showReconsider();
-    return;
+  if (!douyinBtn) return;
+  let tip = douyinBtn.querySelector<HTMLElement>('.promo-toast');
+  if (!tip) {
+    tip = document.createElement('span');
+    tip.className = 'promo-toast';
+    tip.textContent = '已复制抖音号 1642834098 · 去抖音搜索关注我~';
+    douyinBtn.appendChild(tip);
   }
-  promo.dismissed = true;
-  savePromo();
-  hidePromo();
+  // Reflow so re-clicks restart the fade animation.
+  tip.classList.remove('show');
+  tip.getBoundingClientRect();
+  tip.classList.add('show');
+  clearTimeout(douyinToastTimer);
+  douyinToastTimer = setTimeout(() => tip?.classList.remove('show'), 2600);
 });
 
 send({ type: 'lib-ready' });
