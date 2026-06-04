@@ -24,6 +24,12 @@ let commands: CommandSpec[] = [];
 let bossMode = false;
 let pageAnchor = 0;
 
+// ---- 目录(TOC)键盘导航状态 ----
+// tocItems 为最近一次 /目录 渲染出的条目;tocMode 为 true 时方向键移动选中项。
+let tocItems: HTMLElement[] = [];
+let tocSel = -1;
+let tocMode = false;
+
 function send(msg: unknown) {
   vscode.postMessage(msg);
 }
@@ -96,11 +102,15 @@ window.addEventListener('message', (ev: MessageEvent<ToWebview>) => {
       });
       break;
     case 'assistant-text':
+      exitTocMode(); // 正文/提示出现 → 离开目录导航态
       if (msg.markdown) enqueue(async () => ui.staticText(msg.label, msg.text, true));
       else enqueue(() => ui.streamText(msg.label, msg.text));
       break;
     case 'toc':
-      enqueue(async () => ui.toc(msg.chapters, msg.current));
+      enqueue(async () => {
+        const r = ui.toc(msg.chapters, msg.current);
+        enterTocMode(r.items, r.current);
+      });
       break;
     case 'search-results':
       enqueue(async () => ui.search(msg.query, msg.results));
@@ -113,6 +123,7 @@ window.addEventListener('message', (ev: MessageEvent<ToWebview>) => {
       break;
     case 'clear':
       // Switching book / new session: drop everything and reset boss chrome.
+      exitTocMode();
       hardReset();
       bossMode = false;
       ui.setBrand(false);
@@ -280,44 +291,44 @@ inputEl.addEventListener('input', () => {
   autoSize();
 });
 
+// 斜杠菜单打开时的按键(↑↓ 选项 / Tab|Enter 采用 / Esc 关闭)。返回是否已处理。
+function handleMenuKey(e: KeyboardEvent): boolean {
+  if (e.key === 'ArrowDown') {
+    menuIndex = (menuIndex + 1) % menuItems.length;
+    renderMenu();
+  } else if (e.key === 'ArrowUp') {
+    menuIndex = (menuIndex - 1 + menuItems.length) % menuItems.length;
+    renderMenu();
+  } else if (e.key === 'Tab' || (e.key === 'Enter' && menuItems.length)) {
+    acceptMenu(menuIndex);
+  } else if (e.key === 'Escape') {
+    hideMenu();
+  } else {
+    return false;
+  }
+  e.preventDefault();
+  return true;
+}
+
+// 菜单关闭时的按键:↑↓ 回溯历史;输入框为空时 ←/→ 直接翻章。返回是否已处理。
+function handleComposerKey(e: KeyboardEvent): boolean {
+  if (e.key === 'ArrowUp') {
+    recall(-1);
+  } else if (e.key === 'ArrowDown') {
+    recall(1);
+  } else if (!bossMode && inputEl.value === '' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+    // 加载后无需先点正文区即可用方向键翻页;有内容时保留为光标移动。
+    send({ type: e.key === 'ArrowLeft' ? 'request-prev' : 'request-next' });
+  } else {
+    return false;
+  }
+  e.preventDefault();
+  return true;
+}
+
 inputEl.addEventListener('keydown', (e: KeyboardEvent) => {
   const menuOpen = !slashMenu.classList.contains('hidden');
-  if (menuOpen) {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      menuIndex = (menuIndex + 1) % menuItems.length;
-      renderMenu();
-      return;
-    }
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      menuIndex = (menuIndex - 1 + menuItems.length) % menuItems.length;
-      renderMenu();
-      return;
-    }
-    if (e.key === 'Tab' || (e.key === 'Enter' && menuItems.length)) {
-      e.preventDefault();
-      acceptMenu(menuIndex);
-      return;
-    }
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      hideMenu();
-      return;
-    }
-  } else {
-    // Menu closed: ↑ / ↓ walk command history (one Up + Enter to repeat /n).
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      recall(-1);
-      return;
-    }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      recall(1);
-      return;
-    }
-  }
+  if (menuOpen ? handleMenuKey(e) : handleComposerKey(e)) return;
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     submit();
@@ -344,6 +355,73 @@ appEl.addEventListener('mouseleave', () => {
 });
 appEl.addEventListener('mouseenter', () => {
   send({ type: 'mouse-enter' });
+});
+
+// ---------- 阅读区 / 目录 方向键导航 ----------
+// 只在阅读面板(#log)获得焦点时生效 —— 点一下正文区即进入。输入框聚焦时不抢键。
+function setTocSel(i: number) {
+  if (!tocItems.length) return;
+  tocSel = Math.max(0, Math.min(tocItems.length - 1, i));
+  tocItems.forEach((it, idx) => it.classList.toggle('toc-selected', idx === tocSel));
+  tocItems[tocSel].scrollIntoView({ block: 'nearest' });
+}
+function enterTocMode(items: HTMLElement[], current: number) {
+  tocItems = items;
+  tocMode = items.length > 0;
+  if (!tocMode) return;
+  setTocSel(current);
+  logEl.focus(); // 打开目录即可直接用方向键选择,无需先点一下
+}
+function exitTocMode() {
+  if (!tocMode) return;
+  tocMode = false;
+  tocItems.forEach((it) => it.classList.remove('toc-selected'));
+  tocItems = [];
+  tocSel = -1;
+}
+
+logEl.addEventListener('keydown', (e: KeyboardEvent) => {
+  const k = e.key;
+
+  if (tocMode && tocItems.length) {
+    if (k === 'ArrowUp' || k === 'ArrowLeft') {
+      e.preventDefault();
+      setTocSel(tocSel - 1);
+    } else if (k === 'ArrowDown' || k === 'ArrowRight') {
+      e.preventDefault();
+      setTocSel(tocSel + 1);
+    } else if (k === 'Enter') {
+      e.preventDefault();
+      const idx = tocItems[tocSel]?.dataset.idx;
+      if (idx != null) {
+        exitTocMode();
+        send({ type: 'command', raw: `/跳转 ${Number(idx) + 1}` });
+      }
+    } else if (k === 'Escape') {
+      e.preventDefault();
+      exitTocMode();
+      inputEl.focus();
+    }
+    return;
+  }
+
+  // 阅读态:左右翻章;上下保留原生滚动(不拦截)。
+  if (k === 'ArrowLeft') {
+    e.preventDefault();
+    send({ type: 'request-prev' });
+  } else if (k === 'ArrowRight') {
+    e.preventDefault();
+    send({ type: 'request-next' });
+  } else if (k === 'Escape') {
+    e.preventDefault();
+    inputEl.focus();
+  } else if (k === '/') {
+    // 回到输入框并唤起斜杠命令面板
+    e.preventDefault();
+    inputEl.focus();
+    inputEl.value = '/';
+    inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+  }
 });
 
 // ---------- boot ----------

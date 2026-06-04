@@ -15,6 +15,18 @@
 
 ---
 
+## 🐟 FishReader 全家桶
+
+FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式与功能一致,挑顺手的用:
+
+- 🌐 **官网**:<https://moyulao.cn/> — 下载、介绍、更新一站获取
+- 🧩 **VS Code 插件**(本项目):伪装成 Claude Code 代码审查 → [wuuhw/fish-reader-vscode](https://github.com/wuuhw/fish-reader-vscode)
+- 💻 **桌面客户端**(Windows / macOS / Linux):伪装成豆包风格 AI 助手 → [wuuhw/fish-reader-client](https://github.com/wuuhw/fish-reader-client)
+
+> 想要桌面版?→ [fish-reader-client](https://github.com/wuuhw/fish-reader-client) ·  更多请访问官网 [moyulao.cn](https://moyulao.cn/)
+
+---
+
 ## ✨ 功能特性
 
 - **对话式阅读界面**:视觉对齐 Claude Code 风格的深色对话流,跟随 VSCode 主题(深色 / 浅色 / 高对比度自动适配)。

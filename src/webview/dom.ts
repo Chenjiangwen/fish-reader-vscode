@@ -181,25 +181,34 @@ export class UI {
   }
 
   // ---- toc ----
-  toc(chapters: { index: number; title: string }[], current: number) {
+  // Returns the rendered items + the array position of the current chapter,
+  // so the caller can wire keyboard navigation / selection highlight.
+  toc(
+    chapters: { index: number; title: string }[],
+    current: number
+  ): { items: HTMLElement[]; current: number } {
     const { body } = this.beginAssistant('目录');
     const list = el('div', 'toc-list');
-    let currentItem: HTMLElement | undefined;
-    chapters.forEach((c) => {
+    const items: HTMLElement[] = [];
+    let currentPos = -1;
+    chapters.forEach((c, pos) => {
       const isCurrent = c.index === current;
       const item = el('div', 'toc-item' + (isCurrent ? ' toc-current' : ''));
+      item.dataset.idx = String(c.index); // 0-based chapter index, for /跳转
       item.textContent = `${c.index + 1}. ${c.title}`;
       if (isCurrent) {
         item.appendChild(el('span', 'toc-current-tag', '当前'));
-        currentItem = item;
+        currentPos = pos;
       }
       item.addEventListener('click', () => this.sink(`/跳转 ${c.index + 1}`));
       list.appendChild(item);
+      items.push(item);
     });
     body.appendChild(list);
     // Locate the current chapter so it's visible even in a long book.
-    if (currentItem) currentItem.scrollIntoView({ block: 'center' });
+    if (currentPos >= 0) items[currentPos].scrollIntoView({ block: 'center' });
     else this.scroll();
+    return { items, current: currentPos >= 0 ? currentPos : 0 };
   }
 
   // ---- search ----
