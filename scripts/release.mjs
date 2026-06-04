@@ -123,7 +123,7 @@ try {
   console.log(C.dim(`    • git commit -m "release: ${tag}"`));
   console.log(C.dim(`    • git tag -a ${tag}`));
   console.log(C.dim(`    • git push origin ${branch} --follow-tags`));
-  console.log(C.dim(`    → 触发 GitHub Actions:打包 / 发布商店 / 回传 OSS / 更新 vscode.json`));
+  console.log(C.dim(`    → 触发 GitHub Actions:打包 .vsix / 回传 OSS / 更新 vscode.json / 建 Release`));
 
   const ok = (await rl.question(`\n  确认提交并推送? 这会触发线上发布 (${C.b('y')}/N): `))
     .trim()
@@ -142,8 +142,9 @@ try {
   run(`git tag -a ${tag} -m "release ${tag}"`);
   run(`git push origin ${branch} --follow-tags`);
 
-  console.log(C.g(`\n  ✓ 已推送 ${tag}。前往 GitHub Actions 查看发布进度。`));
-  console.log(C.dim(`    完成后 .vsix 与 vscode.json 会自动上传到 OSS,商店也会更新。\n`));
+  console.log(C.g(`\n  ✓ 已推送 ${tag}。前往 GitHub Actions 查看构建进度。`));
+  console.log(C.dim(`    完成后 .vsix 与 vscode.json 会上传到 OSS;到 Release 下载 .vsix`));
+  console.log(C.dim(`    手动传到 marketplace.visualstudio.com/manage 即可发布到商店。\n`));
 } finally {
   rl.close();
 }

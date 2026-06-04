@@ -1,12 +1,14 @@
 name: Release
 
 # 触发方式:
-#   1. 推送形如 v0.1.0 的 tag → 打包 .vsix、发布到 VS Code 商店、回传 OSS、
-#      生成 vscode.json(官网据此拿到最新插件)、建 GitHub Release(附带 .vsix)
-#   2. Actions 页手动运行(workflow_dispatch)→ 只打包并存为构建产物,不发布
+#   1. 推送形如 v0.1.0 的 tag → 打包 .vsix、回传 OSS、生成 vscode.json
+#      (官网据此拿到最新插件)、建 GitHub Release(附带 .vsix)
+#   2. Actions 页手动运行(workflow_dispatch)→ 只打包并存为构建产物,不回传
 #
-# 版本号以 package.json 为准(vsce 据此发布);tag 仅用于触发与命名,
-# 发布前请确保 package.json 版本已 bump 且与 tag 一致。
+# 不自动发布到 VS Code 商店:从 Release / OSS / Actions 产物里下载 .vsix,
+# 手动上传到 https://marketplace.visualstudio.com/manage 即可(无需 VSCE_PAT)。
+#
+# 版本号以 package.json 为准;tag 仅用于触发与命名,发布前确保两者一致。
 on:
   push:
     tags:
@@ -63,14 +65,10 @@ jobs:
           path: ${{ steps.ver.outputs.vsix }}
 
       # ===================================================================
-      # 以下仅在「推送 v* tag」时执行(手动 Run 到此结束,只构建不发布)
+      # 以下仅在「推送 v* tag」时执行(手动 Run 到此结束,只构建不回传)。
+      # 注:不自动发布到 VS Code 商店 —— 商店发布请下载 .vsix 后手动上传到
+      #     https://marketplace.visualstudio.com/manage(无需 VSCE_PAT)。
       # ===================================================================
-
-      - name: 发布到 VS Code 商店
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: npx --yes @vscode/vsce publish --packagePath "${{ steps.ver.outputs.vsix }}"
 
       # 更新说明(展示给终端用户):优先 RELEASE_NOTES.md,否则取最近一条提交主题
       - name: 计算更新说明
