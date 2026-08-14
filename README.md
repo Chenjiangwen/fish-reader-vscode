@@ -1,7 +1,7 @@
 # CLI Reader
 
-[![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/Chenjiangwen.fish-reader?label=Marketplace&color=569cd6)](https://marketplace.visualstudio.com/items?itemName=Chenjiangwen.fish-reader)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/Chenjiangwen.fish-reader?label=Installs&color=6a9955)](https://marketplace.visualstudio.com/items?itemName=Chenjiangwen.fish-reader)
+[![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/Chenjiangwen.cli-reader?label=Marketplace&color=569cd6)](https://marketplace.visualstudio.com/items?itemName=Chenjiangwen.cli-reader)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/Chenjiangwen.cli-reader?label=Installs&color=6a9955)](https://marketplace.visualstudio.com/items?itemName=Chenjiangwen.cli-reader)
 [![GitHub Stars](https://img.shields.io/github/stars/Chenjiangwen/fish-reader-vscode?style=flat&logo=github&color=d4a574)](https://github.com/Chenjiangwen/fish-reader-vscode)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 

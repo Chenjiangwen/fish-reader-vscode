@@ -39,8 +39,9 @@ jobs:
         shell: bash
         run: |
           VER=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
           echo "version=$VER" >> "$GITHUB_OUTPUT"
-          echo "vsix=fish-reader-$VER.vsix" >> "$GITHUB_OUTPUT"
+          echo "vsix=$NAME-$VER.vsix" >> "$GITHUB_OUTPUT"
           echo "📦 版本 $VER"
           # 推 tag 时校验 tag 与 package.json 一致(不一致只告警,不中断)
           if [ "${{ startsWith(github.ref, 'refs/tags/') }}" = "true" ]; then

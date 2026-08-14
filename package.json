@@ -1,5 +1,5 @@
 {
-  "name": "fish-reader",
+  "name": "cli-reader",
   "displayName": "CLI Reader - 伪装成 AI 对话的小说阅读器",
   "description": "摸鱼看小说 - 本地 TXT/EPUB/FB2 阅读器,界面伪装成 Claude Code / Codex / DeepSeek 的对话流,一键老板键。",
   "version": "0.1.4",
