@@ -1,7 +1,7 @@
 import { ToWebview, CommandSpec } from '../types';
 import { UI } from './dom';
 import { setSpeed, bumpEpoch } from './streaming';
-import { matchCommands } from '../commands/registry';
+import { matchCommands, parseInput } from '../commands/registry';
 
 declare function acquireVsCodeApi(): {
   postMessage(msg: unknown): void;
@@ -19,10 +19,89 @@ const sendBtn = document.getElementById('send-btn') as HTMLButtonElement;
 const plusBtn = document.getElementById('plus-btn') as HTMLButtonElement;
 const tbHint = document.getElementById('tb-hint') as HTMLElement;
 const appEl = document.getElementById('app') as HTMLElement;
+const fsDecBtn = document.getElementById('fs-dec') as HTMLButtonElement | null;
+const fsIncBtn = document.getElementById('fs-inc') as HTMLButtonElement | null;
+
+// ---------- reading font size (persisted via vscode.setState) ----------
+const FS_MIN = 11;
+const FS_MAX = 26;
+const FS_DEFAULT = 15;
+function readSavedFontSize(): number {
+  const s = (vscode.getState() as { fontSize?: number } | undefined) ?? {};
+  const n = typeof s.fontSize === 'number' ? s.fontSize : FS_DEFAULT;
+  return Math.max(FS_MIN, Math.min(FS_MAX, n));
+}
+let fontSize = readSavedFontSize();
+function applyFontSize() {
+  document.documentElement.style.setProperty('--reader-fs', fontSize + 'px');
+}
+function setFontSize(px: number) {
+  fontSize = Math.max(FS_MIN, Math.min(FS_MAX, px));
+  applyFontSize();
+  vscode.setState({ ...(vscode.getState() as object), fontSize });
+}
+applyFontSize();
+fsDecBtn?.addEventListener('click', () => setFontSize(fontSize - 1));
+fsIncBtn?.addEventListener('click', () => setFontSize(fontSize + 1));
+// Ctrl/Cmd +/- / 0 to grow / shrink / reset the reading font, anywhere in the webview.
+window.addEventListener('keydown', (e: KeyboardEvent) => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  if (e.key === '=' || e.key === '+') {
+    e.preventDefault();
+    setFontSize(fontSize + 1);
+  } else if (e.key === '-' || e.key === '_') {
+    e.preventDefault();
+    setFontSize(fontSize - 1);
+  } else if (e.key === '0') {
+    e.preventDefault();
+    setFontSize(FS_DEFAULT);
+  }
+});
 
 let commands: CommandSpec[] = [];
 let bossMode = false;
 let pageAnchor = 0;
+
+type ReaderTheme = 'claude' | 'codex' | 'deepseek';
+const THEMES: ReaderTheme[] = ['claude', 'codex', 'deepseek'];
+const THEME_LABELS: Record<ReaderTheme, string> = {
+  claude: 'Claude Code · 纯黑极简 / 无衬线正文 / 暖橙点缀',
+  codex: 'Codex · 原生终端 / 等宽正文 / 近乎无强调色',
+  deepseek: 'DeepSeek TUI · 深靛仪表盘 / 等宽正文 / 多语义色',
+};
+
+function isTheme(v: string): v is ReaderTheme {
+  return (THEMES as string[]).includes(v);
+}
+
+function currentTheme(): ReaderTheme {
+  const s = vscode.getState() as { theme?: string } | null;
+  return s?.theme && isTheme(s.theme) ? s.theme : 'claude';
+}
+
+function applyTheme(theme: ReaderTheme) {
+  document.body.dataset.theme = theme;
+  vscode.setState({ ...(vscode.getState() as object), theme });
+}
+
+/** `/theme` 无参时循环切换,带参时切到指定风格。 */
+function handleThemeCommand(args: string) {
+  const arg = args.trim().toLowerCase();
+  if (!arg) {
+    const next = THEMES[(THEMES.indexOf(currentTheme()) + 1) % THEMES.length];
+    applyTheme(next);
+    ui.system(`阅读风格 → ${THEME_LABELS[next]}`);
+    return;
+  }
+  if (!isTheme(arg)) {
+    ui.system(`未知风格 "${arg}"。可选: ${THEMES.join(' / ')}`);
+    return;
+  }
+  applyTheme(arg);
+  ui.system(`阅读风格 → ${THEME_LABELS[arg]}`);
+}
+
+applyTheme(currentTheme());
 
 // ---- 目录(TOC)键盘导航状态 ----
 // tocItems 为最近一次 /目录 渲染出的条目;tocMode 为 true 时方向键移动选中项。
@@ -273,7 +352,13 @@ function acceptMenu(i: number) {
 function submit() {
   const raw = inputEl.value.trim();
   if (!raw) return;
-  send({ type: 'command', raw });
+  const parsed = parseInput(raw);
+  if (parsed.cmd === '/主题') {
+    ui.user(raw);
+    handleThemeCommand(parsed.args);
+  } else {
+    send({ type: 'command', raw });
+  }
   pushHistory(raw);
   inputEl.value = '';
   hideMenu();

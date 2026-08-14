@@ -6,6 +6,7 @@ export const COMMANDS: CommandSpec[] = [
   { name: '/下一页', display: '/next', aliases: ['/n', '/next', '/下一章'], description: '下一章(整章输出)' },
   { name: '/上一页', display: '/prev', aliases: ['/p', '/prev', '/上一章'], description: '上一章' },
   { name: '/跳转', display: '/jump', aliases: ['/jump', '/goto'], description: '跳到第 N 章', paramHint: '<章节号>' },
+  { name: '/主题', display: '/theme', aliases: ['/theme'], description: '切换阅读风格', paramHint: '[claude|codex|deepseek]' },
   { name: '/搜索', display: '/search', aliases: ['/search', '/find'], description: '全文搜索', paramHint: '<关键词>' },
   { name: '/书签', display: '/bookmark', aliases: ['/bookmark', '/bm'], description: '书签:add 名称 / list / jump 序号', paramHint: '[add 名称|list|jump 序号]' },
   { name: '/历史', display: '/history', aliases: ['/switch', '/history'], description: '切换最近读过的书', paramHint: '[N]' },

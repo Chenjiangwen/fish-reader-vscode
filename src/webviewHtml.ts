@@ -110,6 +110,8 @@ export function getHtml(webview: vscode.Webview, extensionUri: vscode.Uri): stri
           <div class="tb-left">
             <button class="tb-btn" id="plus-btn" title="Add context">+</button>
             <button class="tb-btn" id="boss-btn" title="Boss mode ⌘B">&lt;/&gt;</button>
+            <button class="tb-btn tb-fs" id="fs-dec" title="减小字号 (Ctrl/Cmd -)">A-</button>
+            <button class="tb-btn tb-fs" id="fs-inc" title="增大字号 (Ctrl/Cmd +)">A+</button>
             <span class="file-chip" id="file-chip"></span>
           </div>
           <div class="tb-right">

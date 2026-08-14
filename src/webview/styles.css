@@ -1,23 +1,24 @@
 :root {
   /* Follow the active VSCode theme via --vscode-* vars, with Dark+ fallbacks. */
-  --bg-primary: var(--vscode-sideBar-background, #1e1e1e);
-  --bg-secondary: var(--vscode-sideBarSectionHeader-background, #252526);
-  --bg-input: var(--vscode-input-background, #2d2d2d);
-  --bg-code: var(--vscode-textCodeBlock-background, #2d2d2d);
-  --bg-hover: var(--vscode-list-hoverBackground, #2a2d2e);
+  --bg-primary: var(--vscode-sideBar-background, #1a1a1a);
+  --bg-secondary: var(--vscode-sideBarSectionHeader-background, #202020);
+  --bg-input: var(--vscode-input-background, #26262a);
+  --bg-code: var(--vscode-textCodeBlock-background, #232326);
+  --bg-hover: var(--vscode-list-hoverBackground, #2a2a2e);
 
-  --text-primary: var(--vscode-foreground, #d4d4d4);
-  --text-secondary: var(--vscode-descriptionForeground, #858585);
+  --text-primary: var(--vscode-foreground, #e6e6e6);
+  --text-secondary: var(--vscode-descriptionForeground, #9a9a9a);
   --text-tertiary: var(--vscode-disabledForeground, #6e6e6e);
 
-  --border: var(--vscode-panel-border, #333);
-  --input-border: var(--vscode-input-border, #3c3c3c);
-  --accent: var(--vscode-focusBorder, #007acc);
-  --btn-bg: var(--vscode-button-background, #0e639c);
+  --border: var(--vscode-panel-border, #333336);
+  --border-soft: color-mix(in srgb, var(--border) 55%, transparent);
+  --input-border: var(--vscode-input-border, #3a3a3f);
+  --accent: var(--vscode-focusBorder, #cc785c);
+  --btn-bg: var(--vscode-button-background, #cc785c);
   --btn-fg: var(--vscode-button-foreground, #ffffff);
 
-  --accent-user: var(--vscode-charts-green, #6a9955);
-  --accent-assistant: var(--vscode-charts-blue, #569cd6);
+  --accent-user: var(--vscode-charts-green, #7fae6a);
+  --accent-assistant: var(--vscode-charts-orange, #cc785c);
   --accent-thinking: var(--vscode-charts-orange, #d4a574);
   --accent-string: var(--vscode-charts-orange, #ce9178);
 
@@ -28,6 +29,21 @@
 
   --font-mono: var(--vscode-editor-font-family, 'SF Mono', 'Monaco', 'Cascadia Code', Consolas, monospace);
   --font-sans: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  /* Font used for reading content; themes swap this between mono and sans. */
+  --font-read: var(--font-sans);
+
+  /* Reading font size — adjustable at runtime (A- / A+ or Ctrl/Cmd +/-). */
+  --reader-fs: 15px;
+  /* Chrome (prefixes, labels, meta) tracks the reader so nothing looks mismatched. */
+  --reader-fs-sm: var(--reader-fs);
+  --reader-fs-xs: calc(var(--reader-fs) - 2px);
+  --reader-line: 1.9;
+
+  /* Themed surface geometry. */
+  --radius: 10px;
+  --sel-bg: var(--vscode-list-activeSelectionBackground, #37373d);
+  --bubble-bg: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
+  --bubble-bar: transparent;
 }
 
 * {
@@ -58,17 +74,20 @@ body {
 #titlebar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--border);
+  gap: 7px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border-soft);
   font-family: var(--font-mono);
   font-size: 12px;
+  background: var(--bg-primary);
 }
 #brand-icon {
-  color: var(--accent-thinking);
+  color: var(--accent-assistant);
+  font-size: 13px;
 }
 #brand-name {
   font-weight: 600;
+  letter-spacing: 0.2px;
 }
 .muted {
   color: var(--text-secondary);
@@ -78,67 +97,83 @@ body {
 #log {
   flex: 1;
   overflow-y: auto;
-  padding: 12px 12px 18px;
+  padding: 18px 18px 24px;
   outline: none;
+  scroll-behavior: smooth;
 }
 
 .turn {
-  margin-bottom: 14px;
+  max-width: 48rem;
+  margin: 0 auto 18px;
+  font-size: var(--reader-fs);
 }
 
 .prefix {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--reader-fs-sm);
+  letter-spacing: 0.2px;
 }
 .user-prefix {
   color: var(--accent-user);
   margin-right: 8px;
+  font-weight: 600;
 }
 .assistant-prefix {
   color: var(--accent-assistant);
+  font-weight: 600;
 }
 .user-turn {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: var(--bubble-bg);
+  border: 1px solid var(--border-soft);
+  border-left: 2px solid var(--bubble-bar);
+  border-radius: var(--radius);
 }
 .user-text {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-family: var(--font-read);
+  font-size: var(--reader-fs);
   color: var(--text-primary);
 }
 
 .assistant-head {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .assistant-label {
   margin-left: 8px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: var(--reader-fs-sm);
 }
 .assistant-body {
-  line-height: 1.85;
+  line-height: var(--reader-line);
+  font-family: var(--font-read);
+  font-size: var(--reader-fs);
 }
 .novel-text {
-  font-family: var(--font-sans);
+  font-family: var(--font-read);
+  font-size: var(--reader-fs);
   white-space: pre-wrap;
+  letter-spacing: 0.1px;
 }
 
 .chapter-enter {
   color: var(--accent-string);
   font-family: var(--font-mono);
-  font-size: 12px;
-  padding: 4px 0;
+  font-size: var(--reader-fs-sm);
+  font-weight: 600;
+  padding: 6px 0;
 }
 
 .turn-foot {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: var(--reader-fs-xs);
   margin-top: 6px;
 }
 
 /* ---- thinking ---- */
 .thinking-head {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--reader-fs-sm);
 }
 .thinking-dot {
   color: var(--accent-thinking);
@@ -149,25 +184,26 @@ body {
 }
 .thinking-log {
   border-left: 2px solid var(--border);
-  margin: 4px 0 0 4px;
-  padding-left: 10px;
+  margin: 6px 0 0 5px;
+  padding-left: 12px;
 }
 .thinking-line {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: var(--reader-fs-sm);
   color: var(--text-secondary);
   font-style: italic;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 /* ---- cursor ---- */
 .cursor {
   display: inline-block;
   width: 6px;
-  height: 14px;
-  background: var(--text-primary);
-  margin-left: 1px;
+  height: 1em;
+  background: var(--accent-assistant);
+  margin-left: 2px;
   vertical-align: text-bottom;
+  border-radius: 1px;
   animation: blink 1s steps(1) infinite;
 }
 @keyframes blink {
@@ -178,36 +214,38 @@ body {
 
 /* ---- diff ---- */
 .diff-block {
-  margin-top: 10px;
-  border: 0.5px solid var(--border);
-  border-radius: 4px;
+  margin-top: 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
   overflow: hidden;
   background: var(--bg-code);
 }
 .diff-head {
   display: flex;
   justify-content: space-between;
-  padding: 4px 8px;
+  padding: 6px 10px;
   background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-soft);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--reader-fs-xs);
 }
 .diff-file {
   color: var(--text-primary);
 }
 .diff-body {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: var(--reader-fs-sm);
   line-height: 1.6;
+  padding: 4px 0;
 }
 .diff-line {
   display: flex;
-  padding: 0 6px;
+  padding: 0 8px;
   white-space: pre;
 }
 .diff-sign {
-  width: 12px;
-  flex: 0 0 12px;
+  width: 14px;
+  flex: 0 0 14px;
   color: var(--text-tertiary);
 }
 .diff-code {
@@ -234,21 +272,21 @@ body {
 /* ---- code blocks / inline ---- */
 .code-block {
   background: var(--bg-code);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 8px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: var(--reader-fs-sm);
   white-space: pre-wrap;
-  margin: 6px 0;
+  margin: 8px 0;
   color: var(--text-primary);
 }
 .inline-code {
   font-family: var(--font-mono);
   background: var(--bg-code);
-  padding: 1px 4px;
-  border-radius: 3px;
-  font-size: 11.5px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: var(--reader-fs-sm);
   color: var(--accent-string);
 }
 
@@ -256,12 +294,12 @@ body {
 .toc-list,
 .search-list {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--reader-fs-sm);
 }
 .toc-item,
 .search-item {
-  padding: 3px 6px;
-  border-radius: 3px;
+  padding: 5px 8px;
+  border-radius: 6px;
   cursor: pointer;
 }
 .toc-item:hover,
@@ -273,20 +311,20 @@ body {
   font-weight: 700;
   background: var(--bg-hover);
   border-left: 2px solid var(--accent-string);
-  padding-left: 4px;
+  padding-left: 6px;
 }
 /* 键盘选中项(方向键移动),与「当前章节」区分:用强调色描边 + 背景 */
 .toc-selected {
   background: var(--bg-hover);
   outline: 1px solid var(--accent);
   outline-offset: -1px;
-  border-radius: 3px;
+  border-radius: 6px;
 }
 .toc-current-tag {
   display: inline-block;
   margin-left: 6px;
-  padding: 0 5px;
-  border-radius: 8px;
+  padding: 0 6px;
+  border-radius: 9px;
   font-size: 10px;
   font-weight: 600;
   vertical-align: middle;
@@ -303,12 +341,12 @@ body {
   left: 0;
   right: 0;
   bottom: calc(100% + 6px);
-  max-height: 220px;
+  max-height: 240px;
   overflow-y: auto;
-  background: var(--vscode-editorWidget-background, var(--bg-secondary));
+  background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
   z-index: 10;
 }
 #slash-menu.hidden {
@@ -318,13 +356,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 10px;
+  padding: 6px 12px;
   cursor: pointer;
   font-family: var(--font-mono);
   font-size: 12px;
 }
 .slash-item.selected {
-  background: var(--vscode-list-activeSelectionBackground, #094771);
+  background: var(--sel-bg);
 }
 .slash-item:hover:not(.selected) {
   background: var(--bg-hover);
@@ -341,10 +379,10 @@ body {
 /* Selected row: force readable foreground over the highlight background. */
 .slash-item.selected .slash-name,
 .slash-item.selected .slash-desc {
-  color: var(--vscode-list-activeSelectionForeground, #ffffff);
+  color: var(--text-primary);
 }
 .slash-menu-head {
-  padding: 5px 10px 3px;
+  padding: 6px 12px 4px;
   font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--text-tertiary);
@@ -353,17 +391,19 @@ body {
 /* ---- composer (Claude Code style) ---- */
 #composer {
   position: relative;
-  padding: 8px 10px 10px;
+  padding: 10px 14px 14px;
 }
 .composer-box {
   border: 1px solid var(--input-border);
-  border-radius: 8px;
+  border-radius: 14px;
   background: var(--bg-input);
-  padding: 8px 10px 6px;
-  transition: border-color 0.1s ease;
+  padding: 10px 12px 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 .composer-box:focus-within {
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 #input {
   width: 100%;
@@ -373,8 +413,8 @@ body {
   border: none;
   padding: 0;
   font-family: var(--font-mono);
-  font-size: 12.5px;
-  line-height: 1.5;
+  font-size: var(--reader-fs-sm);
+  line-height: 1.55;
   outline: none;
 }
 #input::placeholder {
@@ -384,29 +424,31 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 6px;
+  margin-top: 8px;
   gap: 8px;
 }
 .tb-left,
 .tb-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
 }
 .tb-btn {
   background: transparent;
   color: var(--text-secondary);
   border: 1px solid transparent;
-  border-radius: 5px;
-  width: 24px;
-  height: 22px;
+  border-radius: 7px;
+  height: 24px;
+  min-width: 26px;
+  padding: 0 6px;
   font-family: var(--font-mono);
   font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.1s ease, color 0.1s ease;
 }
 .tb-btn:hover {
   background: var(--bg-hover);
@@ -415,6 +457,10 @@ body {
 .tb-btn.boss-active {
   color: var(--accent-thinking);
   border-color: var(--accent-thinking);
+}
+/* font-size steppers: keep them compact and quiet */
+.tb-fs {
+  font-size: 12px;
 }
 .file-chip {
   font-family: var(--font-mono);
@@ -441,16 +487,18 @@ body {
   color: var(--btn-fg);
   border: none;
   border-radius: 50%;
-  width: 26px;
-  height: 26px;
-  font-size: 14px;
+  width: 28px;
+  height: 28px;
+  font-size: 15px;
   line-height: 1;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: filter 0.1s ease;
 }
 .send-btn:hover {
+  filter: brightness(1.08);
   background: var(--vscode-button-hoverBackground, var(--btn-bg));
 }
 
@@ -459,23 +507,25 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 8px;
-  gap: 8px;
+  padding: 10px;
+  gap: 9px;
 }
 .lib-new {
   flex: 0 0 auto;
   background: var(--btn-bg);
   color: var(--btn-fg);
   border: none;
-  border-radius: 6px;
-  padding: 8px 10px;
+  border-radius: 10px;
+  padding: 9px 10px;
   font-family: var(--font-sans);
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
+  transition: filter 0.1s ease;
 }
 .lib-new:hover {
+  filter: brightness(1.08);
   background: var(--vscode-button-hoverBackground, var(--btn-bg));
 }
 .lib-search {
@@ -486,11 +536,12 @@ body {
   background: var(--bg-input);
   color: var(--text-primary);
   border: 1px solid var(--input-border);
-  border-radius: 6px;
-  padding: 6px 9px;
+  border-radius: 10px;
+  padding: 7px 11px;
   font-family: var(--font-sans);
   font-size: 12px;
   outline: none;
+  transition: border-color 0.12s ease;
 }
 .lib-search input:focus {
   border-color: var(--accent);
@@ -500,14 +551,15 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 .lib-item {
   position: relative;
-  padding: 8px 9px;
-  border-radius: 6px;
+  padding: 9px 11px;
+  border-radius: 10px;
   cursor: pointer;
   border: 1px solid transparent;
+  transition: background 0.1s ease, border-color 0.1s ease;
 }
 .lib-item:hover {
   background: var(--bg-hover);
@@ -518,14 +570,14 @@ body {
 }
 .lib-del {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 7px;
+  right: 7px;
   width: 18px;
   height: 18px;
   line-height: 16px;
   padding: 0;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   background: transparent;
   color: var(--text-secondary);
   font-size: 15px;
@@ -554,10 +606,10 @@ body {
   font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--text-secondary);
-  margin-top: 3px;
+  margin-top: 4px;
 }
 .lib-bar {
-  margin-top: 6px;
+  margin-top: 7px;
   height: 3px;
   border-radius: 2px;
   background: var(--bg-hover);
@@ -637,7 +689,7 @@ body {
   padding: 7px 9px;
   font-size: 11px;
   color: var(--text-primary);
-  background: var(--vscode-editorWidget-background, var(--bg-secondary));
+  background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
@@ -659,12 +711,172 @@ body {
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: var(--vscode-editorWidget-background, var(--bg-secondary));
+  border-top-color: var(--bg-secondary);
 }
 .promo-link:hover {
   background: var(--bg-hover);
   border-color: var(--accent-thinking);
 }
+/* ============================================================
+   Reader style presets selected by /theme.
+   Palettes sampled from real CLI screenshots.
+   ============================================================ */
+
+/* ---- claude: Minimal Dark — 纯黑底 / 暖橙品牌色 / 无衬线正文 / 低密度 ---- */
+body[data-theme='claude'] {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-input: #000000;
+  --bg-code: #0d0d0d;
+  --bg-hover: #1a1a1a;
+
+  --text-primary: #ffffff;
+  --text-secondary: #808080;
+  --text-tertiary: #5a5a5a;
+
+  --border: #2a2a2a;
+  --border-soft: #1e1e1e;
+  --input-border: #2a2a2a;
+
+  --accent: #d97757;
+  --btn-bg: #d97757;
+  --btn-fg: #000000;
+  --accent-user: #e19d9c;
+  --accent-assistant: #d97757;
+  --accent-thinking: #808080;
+  --accent-string: #e19d9c;
+  --diff-add-text: #60b941;
+  --diff-del-text: #ed6b5e;
+
+  --font-read: var(--font-sans);
+  --reader-line: 2;
+  --radius: 4px;
+  --sel-bg: #1a1a1a;
+  --bubble-bg: transparent;
+  --bubble-bar: transparent;
+}
+/* 极简：正文不加气泡，仅靠留白分隔 */
+body[data-theme='claude'] .user-turn {
+  border-color: transparent;
+  padding: 2px 0;
+}
+body[data-theme='claude'] .turn {
+  margin-bottom: 22px;
+}
+body[data-theme='claude'] #titlebar {
+  border-bottom-color: var(--border);
+}
+
+/* ---- codex: Plain Terminal — 纯黑底 / 几乎无强调色 / 等宽 / 高密度朴素 ---- */
+body[data-theme='codex'] {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-input: #1a1b1d;
+  --bg-code: #0a0a0a;
+  --bg-hover: #1a1b1d;
+
+  --text-primary: #ffffff;
+  --text-secondary: #9a9a9a;
+  --text-tertiary: #6a6a6a;
+
+  --border: #1f1f1f;
+  --border-soft: #161616;
+  --input-border: #2a2b2d;
+
+  --accent: #5fb8c6;
+  --btn-bg: #1a1b1d;
+  --btn-fg: #ffffff;
+  --accent-user: #ffffff;
+  --accent-assistant: #ffffff;
+  --accent-thinking: #9a9a9a;
+  --accent-string: #5fb8c6;
+  --diff-add-text: #9a9a9a;
+  --diff-del-text: #e0563c;
+
+  --font-read: var(--font-mono);
+  --reader-line: 1.65;
+  --radius: 0px;
+  --sel-bg: #1a1b1d;
+  --bubble-bg: #0a0a0a;
+  --bubble-bar: #2a2b2d;
+}
+/* 原生 shell 观感：方角、细边、紧凑 */
+body[data-theme='codex'] .turn {
+  margin-bottom: 12px;
+}
+body[data-theme='codex'] .user-turn {
+  padding: 6px 10px;
+}
+body[data-theme='codex'] .composer-box {
+  box-shadow: none;
+}
+body[data-theme='codex'] .send-btn {
+  border-radius: 0;
+}
+
+/* ---- deepseek: Vivid Dashboard — 深靛底 / 多语义色 / 等宽 / 高密度 ---- */
+body[data-theme='deepseek'] {
+  --bg-primary: #111216;
+  --bg-secondary: #191b21;
+  --bg-input: #222327;
+  --bg-code: #16181d;
+  --bg-hover: #262832;
+
+  --text-primary: #e8eaf2;
+  --text-secondary: #adafd5;
+  --text-tertiary: #8787ad;
+
+  --border: #323955;
+  --border-soft: #262b40;
+  --input-border: #3a4166;
+
+  --accent: #6787f8;
+  --btn-bg: #6787f8;
+  --btn-fg: #0d0f16;
+  --accent-user: #73acf9;
+  --accent-assistant: #6787f8;
+  --accent-thinking: #f9d974;
+  --accent-string: #cc8a67;
+  --diff-add-text: #81d48e;
+  --diff-del-text: #ed6b5e;
+
+  --font-read: var(--font-mono);
+  --reader-line: 1.75;
+  --radius: 6px;
+  --sel-bg: #323955;
+  --bubble-bg: #222327;
+  --bubble-bar: #6787f8;
+}
+/* 仪表盘观感：输入块高亮、思考文字用琥珀色、状态栏多色 */
+body[data-theme='deepseek'] .turn {
+  margin-bottom: 14px;
+}
+body[data-theme='deepseek'] .thinking-line {
+  color: var(--accent-thinking);
+}
+body[data-theme='deepseek'] .thinking-log {
+  border-left-color: var(--accent-thinking);
+}
+body[data-theme='deepseek'] .composer-box {
+  background: var(--bg-input);
+  border-color: var(--accent);
+}
+body[data-theme='deepseek'] .inline-code {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--text-primary);
+}
+
+/* ---- system notices (e.g. /theme feedback) ---- */
+.system-turn {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--reader-fs-xs);
+}
+.system-prefix {
+  color: var(--accent);
+  margin-right: 8px;
+}
+
 .promo-ico {
   width: 14px;
   height: 14px;

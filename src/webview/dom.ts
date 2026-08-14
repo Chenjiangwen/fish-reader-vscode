@@ -70,6 +70,14 @@ export class UI {
     this.log.textContent = '';
   }
 
+  system(text: string) {
+    const turn = el('div', 'turn system-turn');
+    turn.appendChild(el('span', 'prefix system-prefix', 'system'));
+    turn.appendChild(el('span', 'system-text', text));
+    this.log.appendChild(turn);
+    this.scroll();
+  }
+
   // ---- user line ----
   user(text: string) {
     const turn = el('div', 'turn user-turn');

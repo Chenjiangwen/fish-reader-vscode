@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+- 新增 `/theme` 命令:Claude Code / Codex / DeepSeek TUI 三款阅读风格,配色、正文字体、行距与信息密度整体切换;不带参数循环切换,选择随会话保存。
+- 阅读字号可调:输入框 `A-` / `A+` 按钮、`Ctrl/Cmd` + `+` / `-` 缩放,`Ctrl/Cmd+0` 复位。
+- 统一 `● assistant`、`edited xxx.ts` 等标识文字与正文字号,切换风格时不再错位。
+
 ## 0.1.1
 
 - 新增 EPUB / FB2 格式支持。

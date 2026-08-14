@@ -30,6 +30,8 @@ FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式
 ## ✨ 功能特性
 
 - **对话式阅读界面**:视觉对齐 Claude Code 风格的深色对话流,跟随 VSCode 主题(深色 / 浅色 / 高对比度自动适配)。
+- **三款阅读风格**:`/theme` 在 Claude Code / Codex / DeepSeek TUI 三种 CLI 观感之间切换,配色、字体、密度整体变化。
+- **阅读字号可调**:`A-` / `A+` 按钮或 `Ctrl/Cmd` + `+` / `-` 实时缩放正文,`Ctrl/Cmd+0` 复位,设置随会话保存。
 - **整章输出 + 智能分页**:一条命令输出一整章;识别不到章节标题的书会按字数自动分页。
 - **智能合并细碎段落**:对话体小说"一行一段"的碎段落会自动合并成可读的整块。
 - **章节解析**:支持 `第X章/节/卷/回/篇`、`Chapter N`、`楔子`、`序章`、`番外`,正则可自定义。
@@ -64,6 +66,7 @@ FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式
 | `/next` | `/n` `/下一页` `/下一章` | 下一章(整章输出) |
 | `/prev` | `/p` `/上一页` `/上一章` | 上一章 |
 | `/jump <章节号>` | `/跳转` `/goto` | 跳到第 N 章 |
+| `/theme [风格]` | `/主题` | 切换阅读风格:`claude` / `codex` / `deepseek`,不带参数则循环切换 |
 | `/search <关键词>` | `/搜索` `/find` | 全文搜索(结果可点击跳转) |
 | `/bookmark [add 名称\|list\|jump 序号]` | `/书签` `/bm` | 书签:添加 / 列表 / 跳转 |
 | `/history [N]` | `/历史` `/switch` | 切换最近读过的书 |
@@ -79,6 +82,33 @@ FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式
 | `Cmd/Ctrl+Shift+B` | 切换工作态(开 / 关) |
 | `Alt+N` | 下一章 |
 | `Alt+P` | 上一章 |
+| `Cmd/Ctrl` + `+` / `-` | 放大 / 缩小阅读字号 |
+| `Cmd/Ctrl+0` | 阅读字号复位 |
+
+---
+
+## 🎨 阅读风格(`/theme`)
+
+三款风格分别对照 Claude Code、Codex、DeepSeek TUI 的真实观感,配色、正文字体、行距与信息密度都不同。输入 `/theme claude` / `/theme codex` / `/theme deepseek` 指定,或直接 `/theme` 循环切换;选择随会话保存。
+
+| 风格 | 观感 |
+|---|---|
+| `claude`(默认) | 纯黑底、无衬线正文、暖橙品牌色点缀,留白多、装饰少 |
+| `codex` | 纯黑底、等宽正文、近乎不用强调色,方角细边的原生终端感 |
+| `deepseek` | 深靛底、等宽正文、蓝紫主色 + 琥珀 / 绿语义色,信息密度更高 |
+
+<table>
+  <tr>
+    <td align="center"><b>claude</b></td>
+    <td align="center"><b>codex</b></td>
+    <td align="center"><b>deepseek</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://gitee.com/cjw5666/image-hosting-service/raw/master/image-hosting-service/pic/2026-8-1416%3A20%3A41-1786695640569.png" alt="claude 风格" width="270" /></td>
+    <td><img src="https://gitee.com/cjw5666/image-hosting-service/raw/master/image-hosting-service/pic/2026-8-1416%3A21%3A53-1786695712108.png" alt="codex 风格" width="270" /></td>
+    <td><img src="https://gitee.com/cjw5666/image-hosting-service/raw/master/image-hosting-service/pic/2026-8-1416%3A12%3A20-1786695139190.png" alt="deepseek 风格" width="270" /></td>
+  </tr>
+</table>
 
 ---
 
@@ -86,6 +116,8 @@ FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式
 
 - `/next` 一次输出**一整章**,光标(滚动条)固定在这一页的开头,你自己往下滚着读,节奏自己掌握。
 - 章节之间穿插的 `● assistant · edited xxx.ts` + 代码 diff 是伪装效果,可在配置里关闭或调频率。
+- 觉得字小 / 字大,用输入框左下角的 `A-` `A+`,或 `Ctrl/Cmd` + `+` / `-` 直接调;`Ctrl/Cmd+0` 回到默认。
+- 换个观感用 `/theme`,详见上面的[阅读风格](#-阅读风格theme)。
 - 进度按字符级保存,关掉 VSCode 重开也能接着读。
 
 ---
