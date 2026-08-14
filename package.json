@@ -1,9 +1,9 @@
 {
   "name": "fish-reader",
-  "displayName": "fish-reader - 摸鱼小说阅读器",
-  "description": "摸鱼看小说 - 本地 TXT/EPUB/FB2 小说阅读器,对话式伪装 UI,一键老板键。FishReader",
+  "displayName": "CLI Reader - 伪装成 AI 对话的小说阅读器",
+  "description": "摸鱼看小说 - 本地 TXT/EPUB/FB2 阅读器,界面伪装成 Claude Code / Codex / DeepSeek 的对话流,一键老板键。",
   "version": "0.1.4",
-  "publisher": "fishreader",
+  "publisher": "Chenjiangwen",
   "license": "MIT",
   "icon": "media/icon.png",
   "repository": {
@@ -47,7 +47,7 @@
       "activitybar": [
         {
           "id": "fishReader",
-          "title": "FishReader",
+          "title": "CLI Reader",
           "icon": "media/icon.svg"
         }
       ]
@@ -56,7 +56,7 @@
       "fishReader": [
         {
           "id": "fishReader.view",
-          "name": "FishReader",
+          "name": "CLI Reader",
           "type": "webview"
         }
       ]
@@ -64,33 +64,33 @@
     "commands": [
       {
         "command": "fishReader.openPanel",
-        "title": "FishReader: Open Panel"
+        "title": "CLI Reader: Open Panel"
       },
       {
         "command": "fishReader.newSession",
-        "title": "FishReader: New Session",
+        "title": "CLI Reader: New Session",
         "icon": "$(add)"
       },
       {
         "command": "fishReader.openInEditor",
-        "title": "FishReader: Open in Editor (Tab)",
+        "title": "CLI Reader: Open in Editor (Tab)",
         "icon": "$(split-horizontal)"
       },
       {
         "command": "fishReader.bossToggle",
-        "title": "FishReader: Toggle Boss Mode"
+        "title": "CLI Reader: Toggle Boss Mode"
       },
       {
         "command": "fishReader.nextPage",
-        "title": "FishReader: Next Page"
+        "title": "CLI Reader: Next Page"
       },
       {
         "command": "fishReader.prevPage",
-        "title": "FishReader: Previous Page"
+        "title": "CLI Reader: Previous Page"
       },
       {
         "command": "fishReader.initFromActiveFile",
-        "title": "FishReader: Open Current File as Book"
+        "title": "CLI Reader: Open Current File as Book"
       }
     ],
     "menus": {
@@ -120,7 +120,7 @@
       }
     ],
     "configuration": {
-      "title": "FishReader",
+      "title": "CLI Reader",
       "properties": {
         "fishReader.charsPerPage": {
           "type": "number",
@@ -193,7 +193,7 @@
             "enum": ["blur", "mouseLeave", "editorFocus"],
             "enumDescriptions": [
               "VSCode 窗口失去焦点(切到别的应用)",
-              "鼠标离开 FishReader 面板",
+              "鼠标离开 CLI Reader 面板",
               "切换/点开代码编辑器 tab"
             ]
           },

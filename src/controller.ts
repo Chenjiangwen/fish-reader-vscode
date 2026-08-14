@@ -80,7 +80,7 @@ export class Controller {
       type: 'assistant-text',
       markdown: true,
       text:
-        '欢迎使用 **FishReader**。\n\n输入 `/init <文件路径>` 关联一本本地小说(支持 txt / epub / fb2),或点击输入框左下角的 `+` 选择文件。\n输入 `/help` 查看全部命令。',
+        '欢迎使用 **CLI Reader**。\n\n输入 `/init <文件路径>` 关联一本本地小说(支持 txt / epub / fb2),或点击输入框左下角的 `+` 选择文件。\n输入 `/help` 查看全部命令。',
     });
   }
 
@@ -546,7 +546,7 @@ export class Controller {
   // ---------- /设置 ----------
   private cmdSettings() {
     void vscode.commands.executeCommand('workbench.action.openSettings', 'fishReader');
-    this.post({ type: 'assistant-text', text: '已打开 FishReader 设置面板。' });
+    this.post({ type: 'assistant-text', text: '已打开 CLI Reader 设置面板。' });
   }
 
   // ---------- /help ----------
