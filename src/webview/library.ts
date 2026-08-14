@@ -103,28 +103,7 @@ searchEl.addEventListener('input', () => {
   render();
 });
 
-// ---- author promo: 官网 / GitHub / 关注抖音 (always shown) ----
-document.getElementById('promo-web')?.addEventListener('click', () => send({ type: 'lib-web' }));
+// ---- GitHub 仓库入口 ----
 document.getElementById('promo-github')?.addEventListener('click', () => send({ type: 'lib-star' }));
-
-let douyinToastTimer: ReturnType<typeof setTimeout> | undefined;
-const douyinBtn = document.getElementById('promo-douyin');
-douyinBtn?.addEventListener('click', () => {
-  send({ type: 'lib-copy', text: '1642834098' });
-  if (!douyinBtn) return;
-  let tip = douyinBtn.querySelector<HTMLElement>('.promo-toast');
-  if (!tip) {
-    tip = document.createElement('span');
-    tip.className = 'promo-toast';
-    tip.textContent = '已复制抖音号 1642834098 · 去抖音搜索关注我~';
-    douyinBtn.appendChild(tip);
-  }
-  // Reflow so re-clicks restart the fade animation.
-  tip.classList.remove('show');
-  tip.getBoundingClientRect();
-  tip.classList.add('show');
-  clearTimeout(douyinToastTimer);
-  douyinToastTimer = setTimeout(() => tip?.classList.remove('show'), 2600);
-});
 
 send({ type: 'lib-ready' });

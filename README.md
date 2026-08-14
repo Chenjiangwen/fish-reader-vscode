@@ -2,7 +2,7 @@
 
 [![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/fishreader.fishreader?label=Marketplace&color=569cd6)](https://marketplace.visualstudio.com/items?itemName=fishreader.fishreader)
 [![Installs](https://img.shields.io/visual-studio-marketplace/i/fishreader.fishreader?label=Installs&color=6a9955)](https://marketplace.visualstudio.com/items?itemName=fishreader.fishreader)
-[![GitHub Stars](https://img.shields.io/github/stars/wuuhw/fish-reader-vscode?style=flat&logo=github&color=d4a574)](https://github.com/wuuhw/fish-reader-vscode)
+[![GitHub Stars](https://img.shields.io/github/stars/Chenjiangwen/fish-reader-vscode?style=flat&logo=github&color=d4a574)](https://github.com/Chenjiangwen/fish-reader-vscode)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 > 一个**对话式 UI 的本地 TXT 小说阅读器**,装在 VSCode 里。把"读小说"变成"和 AI 对话"的样子:深色对话流、`> user` / `● assistant`、流式输出、代码 diff、状态栏——专注阅读,需要时一键切换到"工作态"。
@@ -10,20 +10,8 @@
 纯本地、不联网、不接在线书源、不调用任何 LLM。你的书只在你自己电脑上。
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/wuuhw/fish-reader-vscode/main/media/demo.gif" alt="FishReader 演示" width="800" />
+  <img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/demo.gif" alt="FishReader 演示" width="800" />
 </p>
-
----
-
-## 🐟 FishReader 全家桶
-
-FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式与功能一致,挑顺手的用:
-
-- 🌐 **官网**:<https://moyulao.cn/> — 下载、介绍、更新一站获取
-- 🧩 **VS Code 插件**(本项目):伪装成 Claude Code 代码审查 → [wuuhw/fish-reader-vscode](https://github.com/wuuhw/fish-reader-vscode)
-- 💻 **桌面客户端**(Windows / macOS / Linux):伪装成豆包风格 AI 助手 → [wuuhw/fish-reader-client](https://github.com/wuuhw/fish-reader-client)
-
-> 想要桌面版?→ [fish-reader-client](https://github.com/wuuhw/fish-reader-client) ·  更多请访问官网 [moyulao.cn](https://moyulao.cn/)
 
 ---
 
@@ -97,17 +85,25 @@ FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式
 | `codex` | 纯黑底、等宽正文、近乎不用强调色,方角细边的原生终端感 |
 | `deepseek` | 深靛底、等宽正文、蓝紫主色 + 琥珀 / 绿语义色,信息密度更高 |
 
-**`claude`** — 纯黑底、无衬线正文、暖橙品牌色点缀
+下面每款风格各两张:左边**阅读态**(正文 + 假 diff,标题栏带书名),右边**工作态**(Boss Mode 编码对话,书名隐藏)。风格是全局的,两种状态用同一套配色。
 
-<img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-claude.jpg" alt="claude 风格" width="620" />
+### `claude` — 纯黑底、无衬线正文、暖橙品牌色点缀
 
-**`codex`** — 纯黑底、等宽正文、原生终端感
+| 阅读态 | 工作态(Boss Mode) |
+|---|---|
+| <img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-claude-b.jpg" alt="claude 风格 · 阅读态" width="400" /> | <img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-claude-a.jpg" alt="claude 风格 · 工作态" width="400" /> |
 
-<img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-codex.jpg" alt="codex 风格" width="620" />
+### `codex` — 纯黑底、等宽正文、原生终端感
 
-**`deepseek`** — 深靛底、等宽正文、蓝紫主色 + 琥珀 / 绿语义色
+| 阅读态 | 工作态(Boss Mode) |
+|---|---|
+| <img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-codex-b.jpg" alt="codex 风格 · 阅读态" width="400" /> | <img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-codex-a.jpg" alt="codex 风格 · 工作态" width="400" /> |
 
-<img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-deepseek.jpg" alt="deepseek 风格" width="620" />
+### `deepseek` — 深靛底、等宽正文、蓝紫主色 + 琥珀 / 绿语义色
+
+| 阅读态 | 工作态(Boss Mode) |
+|---|---|
+| <img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-deepseek-b.jpg" alt="deepseek 风格 · 阅读态" width="400" /> | <img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-deepseek-a.jpg" alt="deepseek 风格 · 工作态" width="400" /> |
 
 ---
 
@@ -134,6 +130,8 @@ FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式
 | 窗口失焦(`blur`) | 切到别的应用 N 秒后(可配,可关) |
 | 鼠标离开面板(`mouseLeave`) | 鼠标移出面板 N 秒后(可配,可关) |
 | 切到代码 tab(`editorFocus`) | 点开代码编辑器时(可配,默认关) |
+
+三款风格下工作态的样子见上面[阅读风格](#-阅读风格theme)一节右列的截图。
 
 **退出方式**:为了安全,**默认只能手动退出**——快捷键 / `</>` 按钮 / `/resume`。工作态下命令面板只放行 `/resume`,其它命令隐藏,绝不会误操作露出小说。(若想"鼠标移回 / 窗口重新聚焦自动退出",把 `bossMode.autoExit` 设为 `true`。)
 
@@ -182,6 +180,13 @@ npm run watch    # 开发时增量构建
 
 在 VSCode 里打开本项目按 **F5** 启动扩展开发宿主调试。
 
+---
+
+## 🙏 致谢
+
+本项目基于 [wuuhw/fish-reader-vscode](https://github.com/wuuhw/fish-reader-vscode) 二次开发,感谢原作者的开源工作。
+
+---
 
 ## 📄 License
 

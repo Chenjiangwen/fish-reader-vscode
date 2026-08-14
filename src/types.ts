@@ -118,6 +118,4 @@ export type FromLibrary =
   | { type: 'lib-open'; id: string }
   | { type: 'lib-new' }
   | { type: 'lib-delete'; id: string }
-  | { type: 'lib-copy'; text: string }
-  | { type: 'lib-star' }
-  | { type: 'lib-web' };
+  | { type: 'lib-star' };

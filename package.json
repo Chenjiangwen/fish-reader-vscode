@@ -8,12 +8,12 @@
   "icon": "media/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wuuhw/fish-reader-vscode.git"
+    "url": "https://github.com/Chenjiangwen/fish-reader-vscode.git"
   },
   "bugs": {
-    "url": "https://github.com/wuuhw/fish-reader-vscode/issues"
+    "url": "https://github.com/Chenjiangwen/fish-reader-vscode/issues"
   },
-  "homepage": "https://github.com/wuuhw/fish-reader-vscode#readme",
+  "homepage": "https://github.com/Chenjiangwen/fish-reader-vscode#readme",
   "keywords": [
     "fish-reader",
     "fishreader",

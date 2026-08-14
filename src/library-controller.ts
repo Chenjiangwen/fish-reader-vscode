@@ -8,10 +8,8 @@ export class LibraryController {
     private state: StateStore,
     private onOpen: (id: string) => void,
     private onNew: () => void,
-    private onCopy: (text: string) => void,
     private onStar: () => void,
-    private onDelete: (id: string) => Promise<boolean>,
-    private onWeb: () => void
+    private onDelete: (id: string) => Promise<boolean>
   ) {}
 
   handle(msg: FromLibrary) {
@@ -30,14 +28,8 @@ export class LibraryController {
           if (deleted) this.refresh();
         });
         break;
-      case 'lib-copy':
-        this.onCopy(msg.text);
-        break;
       case 'lib-star':
         this.onStar();
-        break;
-      case 'lib-web':
-        this.onWeb();
         break;
     }
   }

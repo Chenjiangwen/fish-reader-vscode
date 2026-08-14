@@ -630,7 +630,7 @@ body {
   display: none;
 }
 
-/* ---- author promo (subtle, pinned at the bottom, dismissible) ---- */
+/* ---- sidebar footer: GitHub 仓库入口 ---- */
 .lib-promo {
   position: relative;
   flex: 0 0 auto;
@@ -643,13 +643,6 @@ body {
 .lib-promo:hover {
   opacity: 1;
 }
-.promo-intro {
-  margin: 0 0 9px;
-  font-size: 11px;
-  line-height: 1.7;
-  color: var(--text-secondary);
-}
-/* author links: 官网 / GitHub / 关注抖音 */
 .promo-actions {
   display: flex;
   flex-wrap: wrap;
@@ -673,45 +666,8 @@ body {
   white-space: nowrap;
   cursor: pointer;
 }
-/* 关注抖音 occupies a full row on top; 官网 + GitHub share the row below. */
 .promo-link-wide {
   flex: 1 1 100%;
-}
-/* "已复制" bubble that pops up from the 关注抖音 button */
-.promo-toast {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  white-space: normal;
-  text-align: center;
-  line-height: 1.5;
-  padding: 7px 9px;
-  font-size: 11px;
-  color: var(--text-primary);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-  opacity: 0;
-  transform: translateY(4px);
-  pointer-events: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  z-index: 30;
-}
-.promo-toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-/* little arrow pointing down at the button */
-.promo-toast::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: var(--bg-secondary);
 }
 .promo-link:hover {
   background: var(--bg-hover);
@@ -881,8 +837,4 @@ body[data-theme='deepseek'] .inline-code {
   width: 14px;
   height: 14px;
   flex: 0 0 auto;
-}
-.promo-ico-dy {
-  width: 15px;
-  height: 15px;
 }

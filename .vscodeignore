@@ -19,3 +19,4 @@ package-lock.json
 .vsix-stage/**
 media/icon-color.svg
 media/demo.gif
+media/theme-*.jpg
