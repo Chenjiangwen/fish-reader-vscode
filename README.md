@@ -97,18 +97,17 @@ FishReader 有**桌面客户端**和 **VS Code 插件**两种形态,书库格式
 | `codex` | 纯黑底、等宽正文、近乎不用强调色,方角细边的原生终端感 |
 | `deepseek` | 深靛底、等宽正文、蓝紫主色 + 琥珀 / 绿语义色,信息密度更高 |
 
-<table>
-  <tr>
-    <td align="center"><b>claude</b></td>
-    <td align="center"><b>codex</b></td>
-    <td align="center"><b>deepseek</b></td>
-  </tr>
-  <tr>
-    <td><img src="https://gitee.com/cjw5666/image-hosting-service/raw/master/image-hosting-service/pic/2026-8-1416%3A20%3A41-1786695640569.png" alt="claude 风格" width="270" /></td>
-    <td><img src="https://gitee.com/cjw5666/image-hosting-service/raw/master/image-hosting-service/pic/2026-8-1416%3A21%3A53-1786695712108.png" alt="codex 风格" width="270" /></td>
-    <td><img src="https://gitee.com/cjw5666/image-hosting-service/raw/master/image-hosting-service/pic/2026-8-1416%3A12%3A20-1786695139190.png" alt="deepseek 风格" width="270" /></td>
-  </tr>
-</table>
+**`claude`** — 纯黑底、无衬线正文、暖橙品牌色点缀
+
+<img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-claude.jpg" alt="claude 风格" width="620" />
+
+**`codex`** — 纯黑底、等宽正文、原生终端感
+
+<img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-codex.jpg" alt="codex 风格" width="620" />
+
+**`deepseek`** — 深靛底、等宽正文、蓝紫主色 + 琥珀 / 绿语义色
+
+<img src="https://raw.githubusercontent.com/Chenjiangwen/fish-reader-vscode/main/media/theme-deepseek.jpg" alt="deepseek 风格" width="620" />
 
 ---
 
